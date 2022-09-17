@@ -1,4 +1,4 @@
-# network_project Phase 1
+# Network Project Phase 1
 UDP server/ client
 Auther: Amirhossein Behzadfar
 ---------------------------------------------------------------------
