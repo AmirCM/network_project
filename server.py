@@ -9,10 +9,16 @@ if __name__ == '__main__':
         server_socket.bind((my_host, my_port))
 
         while True:
-            incoming, addr = server_socket.recvfrom(1024)
+            incoming, addr = server_socket.recvfrom(2048)
             if not incoming:
                 break
 
             server_socket.sendto(incoming, addr)
             print(f"Incoming msg from {addr} connection, msg: {incoming.decode()}")
+
+            if incoming.decode() == "exit":
+                break
+    print("Server is terminated !!!")
+
+
 
