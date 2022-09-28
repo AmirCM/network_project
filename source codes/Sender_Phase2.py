@@ -22,14 +22,17 @@ class Sender:
                 image.close()     # close bmp file
                 break
 
+    def socket_close(self):
+        self.sockets.close()
+
 
 if __name__ == '__main__':
 
-    s = Sender(12000, '192.168.68.126', socket(AF_INET, SOCK_DGRAM), [])  # create instance of Sender class
+    s = Sender(12000, '10.0.0.16', socket(AF_INET, SOCK_DGRAM), [])  # create instance of Sender class
 
     s.make_packet()  # call function to parse bmp file into packets
 
     for packet in s.packets:  # loop through packet array and individually send to receiver
         s.sockets.sendto(packet, (s.destination, s.port))
 
-    s.sockets.close()  # close client socket
+    s.socket_close()  # close client socket
