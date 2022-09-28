@@ -10,7 +10,7 @@ class Sender:
         self.packets = packets  # packet array
 
     def make_packet(self):
-        image = open('image.bmp', 'rb')  # opens bitmap file
+        image = open('../imgs/image.bmp', 'rb')  # opens bitmap file
         i = 0  # initialize loop variable
         while True:
             skip = i * 1024  # skip variable holds number of bytes already stored
@@ -28,11 +28,12 @@ class Sender:
 
 if __name__ == '__main__':
 
-    s = Sender(12000, '10.0.0.16', socket(AF_INET, SOCK_DGRAM), [])  # create instance of Sender class
+    s = Sender(12000, gethostname(), socket(AF_INET, SOCK_DGRAM), [])  # create instance of Sender class
 
     s.make_packet()  # call function to parse bmp file into packets
 
     for packet in s.packets:  # loop through packet array and individually send to receiver
         s.sockets.sendto(packet, (s.destination, s.port))
+    s.sockets.sendto("exit".encode(), (s.destination, s.port))
 
     s.socket_close()  # close client socket

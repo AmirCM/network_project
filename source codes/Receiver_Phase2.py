@@ -6,32 +6,32 @@ class Receiver:
         self.port = port  # server port number
         self.sockets = sockets  # server socket
         self.image = image
+        self.packets = []
+        self.socket_bind()
 
     def make_file(self):
-        self.image = open('received_image.bmp', 'wb')  # opens bitmap file
+        # self.image = open('received_image.bmp', 'wb')  # opens bitmap file
         i = 0  # initialize loop variable
+        self.packets = []
         while True:
             incoming, address = self.sockets.recvfrom(1024)
             self.packets.append(incoming)  # packet to array
-            if not incoming:
+            print(len(incoming))
+            if len(incoming) < 1024:
                 break
 
-        while True:
+        for i, p in enumerate(self.packets):
             skip = i * 1024  # skip variable holds number of bytes already stored
             self.image.seek(skip)  # skip over bytes already stored as packets
-            self.image.write(incoming)  # writing packets to file
+            self.image.write(p)  # writing packets to file
             i += 1  # increment loop variable
-            if len(incoming) < 1024:  # once a packet is less than 1024 bytes, end of file reached, so break
-                self.image.close()  # close bmp file
-                break
+        self.image.close()
 
     def socket_bind(self):
         self.sockets.bind(('', self.port))  # binds to the socket
 
 
 if __name__ == '__main__':
-    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM), open('received_image.bmp', 'x'))
-    r.socket_bind()
+    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM), open('../imgs/received_image.bmp', 'wb'))
     r.make_file()
-    print(r.image)
 

@@ -9,7 +9,7 @@ if __name__ == '__main__':
         server_socket.bind((my_host, my_port))
 
         while True:
-            incoming, addr = server_socket.recvfrom(2048)
+            incoming, addr = server_socket.recvfrom(1024)
             if not incoming:
                 break
 
