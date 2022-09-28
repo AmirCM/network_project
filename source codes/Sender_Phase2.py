@@ -1,4 +1,3 @@
-
 from socket import *   # imports socket module to enable network communication
 
 
