@@ -1,7 +1,10 @@
+from socket import *
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 from tkinter import filedialog
+from Receiver_Phase2 import Receiver
+from Sender_Phase2 import Sender
 
 
 class SenderGui:
@@ -13,7 +16,7 @@ class SenderGui:
 
         self.frm = ttk.Frame(self.root, padding=10)
         self.frm.pack(fill=BOTH, expand=1)  # allowing the widget to take the full space of the root window
-        ttk.Label(self.frm, text="Hello World!").place(x=150, y=10)
+
         ttk.Button(self.frm, text="Quit", command=self.root.destroy).place(x=300, y=350)
         self.btn = ttk.Button(self.frm, text="Show Image", command=self.show_image)
         self.btn.place(x=10, y=350)
@@ -32,7 +35,14 @@ class SenderGui:
         pass
 
     def send_image(self):
-        return self.path
+        with socket(AF_INET, SOCK_DGRAM) as client_socket:
+            s = Sender(12000, gethostname(), client_socket, [])  # create instance of Sender class
+            s.make_packet()  # call function to parse bmp file into packets
+            for packet in s.packets:  # loop through packet array and individually send to receiver
+                s.sockets.sendto(packet, (s.destination, s.port))
+            s.sockets.sendto("exit".encode(), (s.destination, s.port))
+        ttk.Label(self.frm, text="Image sent!!!").place(x=150, y=10)
+
 
     def openfilename(self):
         # open file dialog box to select image

@@ -2,7 +2,6 @@ from socket import *  # imports socket module to enable network communication
 
 
 class Sender:
-
     def __init__(self, port, destination, sockets, packets):
         self.port = port  # server port number
         self.destination = destination  # server name
@@ -27,13 +26,12 @@ class Sender:
 
 
 if __name__ == '__main__':
+    with socket(AF_INET, SOCK_DGRAM) as client_socket:
+        s = Sender(12000, gethostname(), client_socket, [])  # create instance of Sender class
 
-    s = Sender(12000, gethostname(), socket(AF_INET, SOCK_DGRAM), [])  # create instance of Sender class
+        s.make_packet()  # call function to parse bmp file into packets
 
-    s.make_packet()  # call function to parse bmp file into packets
+        for packet in s.packets:  # loop through packet array and individually send to receiver
+            s.sockets.sendto(packet, (s.destination, s.port))
+        s.sockets.sendto("exit".encode(), (s.destination, s.port))
 
-    for packet in s.packets:  # loop through packet array and individually send to receiver
-        s.sockets.sendto(packet, (s.destination, s.port))
-    s.sockets.sendto("exit".encode(), (s.destination, s.port))
-
-    s.socket_close()  # close client socket
