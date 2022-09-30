@@ -15,9 +15,6 @@ ___
 * An instance of the class is initialized, then the make_packet() function is called
 * The file ends with sending each packet one-by-one to the receiver then closing the socket.
 
-
-
-
 # Receiver code
 ___
 ![Alt text](imgs/Receiver_Phase2.png?raw=true "Optional Title")
@@ -32,6 +29,13 @@ ___
 * Initiate a UDP socket (SOCK_DGRAM), with the given port that server is listening to and the local host.
 * Sending the argument value passed to the code. 
 * Receiving the response from the server
+
+# Server code
+___
+![Alt text](imgs/server_snap.png?raw=true "Optional Title")
+* Initiate a UDP socket (SOCK_DGRAM), then in a while loop listen to the given port and any host.
+* After getting the incoming data, we will send it back to client. 
+* In case of getting 'exit' command the loop will break
 
 # Execution
 ___
