@@ -1,6 +1,6 @@
 # Network Project Phase 1
 UDP server/ client
-Auther: Amirhossein Behzadfar, Abhi Patel, Kalvin McCallum
+Auther: Amirhossein Behzadfar
 ---------------------------------------------------------------------
 Enviroment 
   -Windows
