@@ -3,14 +3,13 @@ from socket import *  # imports socket module to enable network communication
 
 class Receiver:
     def __init__(self, port, sockets, image):
-        self.port = port  # server port number
-        self.sockets = sockets  # server socket
-        self.image = image
-        self.packets = []
-        self.socket_bind()
+        self.port = port  # Receiver port number
+        self.sockets = sockets  # Receiver socket
+        self.image = image  # Receiver image
+        self.packets = []  # Receiver packets
+        self.socket_bind()  # Receiver bind to socket
 
     def make_file(self):
-        # self.image = open('received_image.bmp', 'wb')  # opens bitmap file
         i = 0  # initialize loop variable
         self.packets = []
         while True:
@@ -32,6 +31,6 @@ class Receiver:
 
 
 if __name__ == '__main__':
-    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM), open('../imgs/received_image.bmp', 'wb'))
+    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM), open('../imgs/received_image.bmp', 'wb')) # opens bitmap file
     r.make_file()
 
