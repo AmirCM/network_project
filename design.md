@@ -2,11 +2,11 @@
 ___
 Implement RDT 1.0 over a reliable UDP channel. Transfer a BMP file between a UDP client process and a UDP server process. 
 
-# Server code
+# Server/Receiver code
 ___
 ![Alt text](imgs/Receiver_Phase2.png?raw=true "Optional Title")
-* Initiate a UDP server socket (SOCK_DGRAM), then in a while loop listen to the given port and any host.
-* After getting the incoming packets, we will store the packets in an array. 
+* Initiate a UDP receiver socket (SOCK_DGRAM) first, then in a while loop listen to the given port and any host.
+* After receiving the incoming packets, we will store the packets in an array. 
 * We will then write the packets to an image file.
 * Finally, we will open the bitmap file.
 
