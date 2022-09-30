@@ -1,13 +1,14 @@
-# Phase 1 design doc by Amirhossein Behzadfar
+# Phase 2 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
 ___
-Establishing a UDP connection between two processes in a same host. Sending a msg from client and receiving an echo response from the server.
+Implement RDT 1.0 over a reliable UDP channel. Transfer a BMP file between a UDP client process and a UDP server process. 
 
 # Server code
 ___
-![Alt text](imgs/server_snap.png?raw=true "Optional Title")
-* Initiate a UDP socket (SOCK_DGRAM), then in a while loop listen to the given port and any host.
-* After getting the incoming data, we will send it back to client. 
-* In case of getting 'exit' command the loop will break
+![Alt text](imgs/Receiver_Phase2.png?raw=true "Optional Title")
+* Initiate a UDP server socket (), then in a while loop listen to the given port and any host.
+* After getting the incoming packets, we will store the packets in an array. 
+* We will then write the packets to an image file.
+* Finally, we will open the bitmap file.
 
 # Client code
 ___
