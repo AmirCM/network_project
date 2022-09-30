@@ -2,6 +2,18 @@
 ___
 Implement RDT 1.0 over a reliable UDP channel. Transfer a BMP file between a UDP client process and a UDP server process. 
 
+# Sender Code
+___
+![Alt text](imgs/senderclass_snap.JPG?raw=true "Optional Title")
+* This snapshot shows the sender class created, with methods to parse the bmp file and close the socket
+* Class contains attributes for the serverport, server name, socket, and packet array
+* make_packet() method opens the bmp file, and reads 1024B packets of the file at a time, storing these packets in an array
+* seek() allows for skipping over bytes already read, end of file found when a packet is less than 1024B
+
+
+
+
+
 # Receiver code
 ___
 ![Alt text](imgs/Receiver_Phase2.png?raw=true "Optional Title")
