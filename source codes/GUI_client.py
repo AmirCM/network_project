@@ -7,12 +7,12 @@ from Receiver_Phase2 import Receiver
 from Sender_Phase2 import Sender
 
 
-class SenderGui:
+class ClientGui:
     def __init__(self):
         self.path = ''
         self.root = Tk()
         self.root.geometry("400x400")  # size of the window
-        self.root.title("Sender GUI")  # changing the title of our master widget
+        self.root.title("Client GUI")  # changing the title of our master widget
 
         self.frm = ttk.Frame(self.root, padding=10)
         self.frm.pack(fill=BOTH, expand=1)  # allowing the widget to take the full space of the root window
@@ -51,4 +51,4 @@ class SenderGui:
         return filename
 
 
-SenderGui()
+ClientGui()

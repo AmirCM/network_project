@@ -9,7 +9,7 @@ class Sender:
         self.packets = packets  # packet array
 
     def make_packet(self):
-        image = open('../imgs/image.bmp', 'rb')  # opens bitmap file
+        image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
         i = 0  # initialize loop variable
         while True:
             skip = i * 1024  # skip variable holds number of bytes already stored
