@@ -17,11 +17,16 @@ ___
 
 # Receiver code
 ___
-![Alt text](imgs/Receiver_Phase2.png?raw=true "Optional Title")
-* Initiate a UDP receiver socket (SOCK_DGRAM) first, then in a while loop listen to the given port and any host.
+![Alt text](imgs/Receiver_Phase2_Snap1.png?raw=true "Optional Title")
+* This screenshot illustrates the receiver class that was constructed to receive packets from the sender.
 * After receiving the incoming packets, we will store the packets in an array. 
 * We will then write the packets to an image file.
 * Finally, we will open the bitmap file.
+
+![Alt text](imgs/Receiver_Phase2_Snap2.png?raw=true "Optional Title")
+* This screenshot illustrates the main function that was created to implement the class methods to receive packets from the sender.
+* The bmp file is opened and the make file is utilized.
+* The image is then printed.
 
 # Client code
 ___
