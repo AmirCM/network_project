@@ -10,6 +10,10 @@ ___
 * make_packet() method opens the bmp file, and reads 1024B packets of the file at a time, storing these packets in an array
 * seek() allows for skipping over bytes already read, end of file found when a packet is less than 1024B
 
+![Alt text](imgs/sendermain_snap.JPG?raw=true "Optional Title")
+* This screenshot shows the code written to utilize the class methods/attributes to send packets to the receiver.
+* An instance of the class is initialized, then the make_packet() function is called
+* The file ends with sending each packet one-by-one to the receiver then closing the socket.
 
 
 
