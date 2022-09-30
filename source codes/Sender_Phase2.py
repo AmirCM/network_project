@@ -33,5 +33,4 @@ if __name__ == '__main__':
 
         for packet in s.packets:  # loop through packet array and individually send to receiver
             s.sockets.sendto(packet, (s.destination, s.port))
-        s.sockets.sendto("exit".encode(), (s.destination, s.port))
 

@@ -29,6 +29,6 @@ class Receiver:
 
 
 if __name__ == '__main__':
-    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM))  # opens bitmap file
-    r.start()
-    r.make_file('../imgs/received_image.bmp')
+    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM))    # create instance of Receiver class
+    r.start()                                           # Start server & listening for incoming data
+    r.make_file('../imgs/received_image.bmp')           # rebuild & save the image
