@@ -28,7 +28,6 @@ class Sender:
 if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
         s = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
-
         s.make_packet('../imgs/select_me.bmp')  # call function to parse bmp file into packets
 
         for packet in s.packets:  # loop through packet array and individually send to receiver
