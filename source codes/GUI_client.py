@@ -22,7 +22,7 @@ class ClientGui:
         self.root.mainloop()
 
     def show_image(self):
-        self.path = filedialog.askopenfilename(title='Choose "./imgs/select me.bmp"')   # Dialog box to select image
+        self.path = filedialog.askopenfilename(title='Choose "./select me.bmp"')   # Dialog box to select image
         img = Image.open(self.path)                                                     # Open using PIL Image
         img = img.resize((img.size[0] // 2, img.size[1] // 2))                          # resize the image to fit
         img_tk = ImageTk.PhotoImage(img)            # PhotoImage class is used to add image to widgets
@@ -35,11 +35,13 @@ class ClientGui:
 
     def send_image(self):
         with socket(AF_INET, SOCK_DGRAM) as client_socket:
-            s = Sender(12000, gethostname(), client_socket, [])     # create instance of Sender class
-            s.make_packet()                                         # call function to parse bmp file into packets
+            s = Sender(12000, gethostname(), client_socket)     # create instance of Sender class
+            s.make_packet(self.path)                                         # call function to parse bmp file into packets
             for packet in s.packets:  # loop through packet array and individually send to receiver
                 s.sockets.sendto(packet, (s.destination, s.port))   # send each packet
         ttk.Label(self.frm, text="Image sent!!!").place(x=150, y=10)
 
 
 ClientGui()
+
+
