@@ -18,7 +18,6 @@ Instruction
 
 Phase 2
 Implementation of RDT 1.0 over a reliable UDP channel. 
-Transfer of a BMP file between a UDP client process and a UDP server process.
 ---------------------------------------------------------------------
 Enviroment 
   -Windows
