@@ -2,7 +2,7 @@
 
 Authers: Amirhossein Behzadfar, Abhi, Patel, Kalvin McCallum
 
-Phase 1
+Phase 1:
 UDP server/ client
 ---------------------------------------------------------------------
 Enviroment 
@@ -16,7 +16,7 @@ Instruction
   If you pass "exit" by using client, the server will be terminated. 
   * Note: Msg should be less than 2048 Bytes 
 
-Phase 2
+Phase 2:
 Implementation of RDT 1.0 over a reliable UDP channel. 
 ---------------------------------------------------------------------
 Enviroment 
