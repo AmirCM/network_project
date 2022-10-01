@@ -12,7 +12,7 @@ ___
 
 ![Alt text](imgs/Sender_Main.png?raw=true "Optional Title")
 * This screenshot shows the main code written to utilize the class methods/attributes to send packets to the receiver.
-* An instance of the class is initialized (server IP address is written where gethostname() is, then the make_packet() function is called
+* An instance of the class is initialized (server IP address is written where gethostname() is), then the make_packet() function is called
 * The file ends with sending each packet one-by-one to the receiver then closing the socket.
 
 # Receiver Code
