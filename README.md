@@ -34,6 +34,8 @@ Sender/Receiver Instruction
 
 GUI Instruction
 ----------------------------------------------------------------------
+  * Before running the GUI ensure that the pip pillow module is installed when using PyCharm IDE.
+  * This can be done by using the "pip install pillow" command line.
   * Begin by running GUI_server.py and wait for the GUI server window to open.
   * Once the GUI server window opens, run GUI_client.py and wait for the GUI client window to open.
   * On the GUI server window click on the "Start Server" button in the bottom left-hand corner.
