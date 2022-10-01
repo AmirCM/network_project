@@ -36,6 +36,6 @@ GUI Instruction
   * Begin by running GUI_server.py and wait for the GUI server window to open.
   * Once the GUI server window opens, run GUI_client.py and wait for the GUI client window to open.
   * On the GUI server window click on the "Start Server" button in the bottom left-hand corner.
-  * Then click on the "Select Image" button in the bottom left-hand corner of the GUI client window and select the BMP file "select_me.bmp".
+  * Then click on the "Select Image" button in the bottom left-hand corner of the GUI client window and select the BMP file "select me.bmp".
   * Click on the "Send Image" button in the bottom left-hand corner of the GUI client window and wait for message to appear on GUI server window.
   * Once the GUI server window displays "Incoming image received!!!", click on the "Show Image" button in the bottom left corner of the GUI server window.
