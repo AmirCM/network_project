@@ -2,20 +2,6 @@
 
 Authers: Amirhossein Behzadfar, Abhi, Patel, Kalvin McCallum
 
-Phase 1:
-UDP server/ client
----------------------------------------------------------------------
-Enviroment 
-  -Windows
-  -Python 3.9
-
-
-Server/Client Instruction
-----------------------------------------------------------------------
-  * First run the server.py, then run client.py by passing your desired message as a argument. e.g. python client.py "Hello !!!"
-  * If you pass "exit" by using client, the server will be terminated. 
-  * Note: Msg should be less than 2048 Bytes 
-
 Phase 2:
 Implementation of RDT 1.0 over a reliable UDP channel. 
 ---------------------------------------------------------------------
