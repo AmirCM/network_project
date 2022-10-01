@@ -36,25 +36,6 @@ ___
 ___
 ![Alt text](imgs/GUI_Server.png?raw=true "Optional Title")
 
-# Client Code
-___
-![Alt text](imgs/client_snap.png?raw=true "Optional Title")
-* Initiate a UDP socket (SOCK_DGRAM), with the given port that server is listening to and the local host.
-* Sending the argument value passed to the code. 
-* Receiving the response from the server.
-
-# Server Code
-___
-![Alt text](imgs/server_snap.png?raw=true "Optional Title")
-* Initiate a UDP socket (SOCK_DGRAM), then in a while loop listen to the given port and any host.
-* After getting the incoming data, we will send it back to client. 
-* In case of getting 'exit' command the loop will break.
-
-# Client/Server Execution
-___
-![Alt text](imgs/phase_1.png?raw=true "Optional Title")
-* This image illustrates the execution of the UDP client server network.
-
 # Sender/Receiver Execution
 ___
 ![Alt text](imgs/Sender_Receiver_Execution.png?raw=true "Optional Title")
@@ -76,3 +57,25 @@ ___
 
 ![Alt text](imgs/Received_Image_GUI_Server.png?raw=true "Optional Title")
 * Image received at Receiver GUI.
+
+
+# Phase 1
+
+# Client Code
+___
+![Alt text](imgs/client_snap.png?raw=true "Optional Title")
+* Initiate a UDP socket (SOCK_DGRAM), with the given port that server is listening to and the local host.
+* Sending the argument value passed to the code. 
+* Receiving the response from the server.
+
+# Server Code
+___
+![Alt text](imgs/server_snap.png?raw=true "Optional Title")
+* Initiate a UDP socket (SOCK_DGRAM), then in a while loop listen to the given port and any host.
+* After getting the incoming data, we will send it back to client. 
+* In case of getting 'exit' command the loop will break.
+
+# Client/Server Execution
+___
+![Alt text](imgs/phase_1.png?raw=true "Optional Title")
+* This image illustrates the execution of the UDP client server network.
