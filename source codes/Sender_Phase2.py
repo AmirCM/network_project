@@ -60,7 +60,7 @@ class Packet:
 
 
 class Sender:
-    def __init__(self, port, destination, sockets, ):
+    def __init__(self, port, destination, sockets):
         self.port = port  # server port number
         self.destination = destination  # server name
         self.sockets = sockets  # client socket
