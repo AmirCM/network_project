@@ -88,7 +88,7 @@ if __name__ == '__main__': # Main function begins here
         if state == states[0]: # Conditional statement for first state
 
             if r.rdt_rcv(recv_pkt) and (r.corrupt(recv_pkt) or r.get_seq(recv_pkt) == 1):
-                if once_thru == 1
+                if once_thru == 1:
                     checksum = r.checksum(seqNum, data)
                     send_pkt = r.make_pkt(1, ack, checksum)
                     r.udt_send(send_pkt)
