@@ -43,11 +43,12 @@ class Receiver:
     # Function to check if sender packet is corrupt
     def corrupt_check(self, senderpacket, checksum):
         sender_packet_length = len(senderpacket)
-        if checksum(senderpacket[0:(sender_packet_length - 1)]) == senderpacket[(sender_packet_length - 1):sender_packet_length]:
+        if checksum(senderpacket[0:(sender_packet_length - 1)]) == senderpacket[
+                                                                   (sender_packet_length - 1):sender_packet_length]:
             return True
         else:
             return False
-    
+
     # Function used to make image file for Phase 2
     def make_file(self, path):
         with open(path, 'wb') as image:
@@ -60,7 +61,7 @@ class Receiver:
     def make_packet(self, data, checksum):
         i = 0
         sequence_num = i % 2
-        chunk = self.data.read(1024)  
+        chunk = self.data.read(1024)
         chunk += sequence_num.to_bytes(1, 'big')
         receiverpacket = str(int(sequence_num)).encode() + data + checksum
         return receiverpacket
@@ -86,20 +87,15 @@ if __name__ == '__main__':
     # State 1
     # If the received packet is corrupt or sequence with ‘1’ it sends acknowledgment with sequence number ‘1’ to it which tells the sender that the packet sent was not in order.
     if corrupt_check(senderpacket) or check_sequence_number(senderpacket) == 'True':
-        
-    
+
     # If the packet is not corrupt and has sequence number ‘0’ the receiver extracts the data and sends acknowledgment with the sequence ‘0’. It moves to the next state.
     if not corrupt_check(senderpacket) and check_sequence_number(senderpacket) == 'False':
-        
 
     # State 2
     # If the received packet is corrupt or sequence with ‘0’ it sends acknowledgment with sequence number ‘0’ to it which tells the sender that the packet sent was not in order.
     if corrupt_check(senderpacket) or check_sequence_number(senderpacket) == 'False':
-        
-        
+
     # If the packet is not corrupt and has sequence number ‘1’ the receiver extracts the data and sends acknowledgment with the sequence ‘1’. It moves to the next state.
     if not corrupt_check(senderpacket) and check_sequence_number(senderpacket) == 'True':
-    
-
 
     r.make_file('../imgs/received_image.bmp')  # rebuild & save the image
