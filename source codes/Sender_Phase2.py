@@ -1,5 +1,20 @@
 from socket import *  # imports socket module to enable network communication
 
+
+def seqnum_zero(receiverpacket):
+    if receiverpacket[0] == 0:
+        return True
+    else:
+        return False
+
+
+def seqnum_one(receiverpacket):
+    if receiverpacket[0] == 1:
+        return True
+    else:
+        return False
+
+
 class Packet:
 
     def __init__(self, data):
@@ -30,7 +45,7 @@ class Packet:
 
             seqnum = i % 2
 
-            chunk += seqnum.to_bytes(1, 'big')
+            chunk = chunk + seqnum.to_bytes(1, 'big') + len(chunk)
 
             ch = self.checksum(chunk)
 
@@ -45,27 +60,50 @@ class Packet:
 
 
 class Sender:
-    def __init__(self, port, destination, sockets):
+    def __init__(self, port, destination, sockets, ):
         self.port = port  # server port number
         self.destination = destination  # server name
         self.sockets = sockets  # client socket
         self.packets = []  # packet array
+        self.rcvpkt = []
 
     def socket_close(self):
         self.sockets.close()
 
+    def receive_packet(self):
+        self.rcvpkt, serveraddress = self.sockets.recvfrom(4)
+        if self.rcvpkt:
+            True
+        else:
+            False
+
 
 if __name__ == '__main__':
-    # with socket(AF_INET, SOCK_DGRAM) as client_socket:
-      #   s = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
+    with socket(AF_INET, SOCK_DGRAM) as client_socket:
+        s = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
 
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
-
     p = Packet(image)
+    p.make_packet()
 
-    p.make_packet()  # call function to parse bmp file into packets
+    states = ['w4zero', 'w4Ack0', 'w4zero', 'w4Ack1']
+    state = states[0]
 
-   # for packet in p.packets:  # loop through packet array and individually send to receiver
-    #    s.sockets.sendto(packet, (s.destination, s.port))
-            # print(checksum(packet))
+    for packet in p.packets:
+        if state == states[0]:
+            s.sockets.send(packet.encode())
+            state = states[1]
 
+        elif states == states[1]:
+            if s.receive_packet() and (corrupt(rcvpkt) or seqnum_zero(s.rcvpkt)):
+                s.sockets.send(packet.encode())
+            elif s.receive_packet() and (not corrupt(rcvpkt)) and seqnum_one(s.rcvpkt):
+                state = states[2]
+        elif state == states[2]:
+            s.sockets.send(packet.encode())
+            state = states[3]
+        elif state == states[3]:
+            if s.receive_packet() and (corrupt(rcvpkt) or seqnum_zero(s.rcvpkt)):
+                s.sockets.send(packet.encode())
+            elif s.receive_packet() and (not corrupt(rcvpkt)) and seqnum_one(s.rcvpkt):
+                state = states[0]
