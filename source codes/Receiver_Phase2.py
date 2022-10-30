@@ -3,29 +3,33 @@ import sys
 from socket import *  # imports socket module to enable network communication
 
 
-ack = True
 states = ['w4zero', 'w4one']
 state = states[0]
 buffer = b''
-seqNum = False
 once_thru = 0
 
 
 class Receiver:
-    def __init__(self, port, sockets):
-            self.port = port  # Receiver port number
-            self.sockets = sockets  # Receiver socket
-            self.packets = []  # Receiver packets
-            self.socket_bind()  # Receiver bind to socket
+    def __init__(self, port, sockets, destination, data, ack, checksum, seqNum):
+        self.port = port  # Receiver port number
+        self.destination = destination
+        self.sockets = sockets  # Receiver socket
+        self.packets = []  # Receiver packets
+        self.socket_bind()  # Receiver bind to socket
+        self.recv_pkt = []
+        self.data = data
+        self.ACK = ack
+        self.checksum = checksum
+        self.seqNum = seqNum
 
-
-    def rdt_rcv(packet):# Function to receive packets from sender
-        if not packet:
-            return False
+    def rdt_rcv(self):
+        self.recv_pkt, client_address = self.sockets.recvfrom(4)
+        if self.recv_pkt:
+            True
         else:
-            return True
+            False
 
-    def checksum(data):# Function to generate checksum
+    def checksum(self, data):
         ch = data[0:2]
         for i in range(2, len(data), 2):
             a = int.from_bytes(data[i:i + 2], 'big') + int.from_bytes(ch, 'big')
@@ -35,40 +39,52 @@ class Receiver:
             ch = ch[1:]
         return ch
 
-
-    def corrupt(rcv_pkt):# Function to check for corruption
-        pkt_len = len(rcv_pkt)
-        if r.checksum(rcv_pkt[0:(pkt_len - 1)]) == rcv_pkt[(pkt_len - 1):pkt_len]:
-            return False
+    def corrupt(self, recv_pkt):
+        ch = self.checksum(recv_pkt[0:(len(recv_pkt) - 2)])
+        if ch == recv_pkt[len(recv_pkt - 2):]:
+            True
         else:
-            return True
+            False
 
-    def get_seq(rcv_pkt):# Function to extract sequence number from received packet
-        if rcv_pkt[0:1] == '1':
+    def seqnum_zero(self, recv_pkt):
+        if recv_pkt[0] == 0:
             return True
-        if rcv_pkt[0:1] == '0':
+        else:
             return False
 
-    def extract(packet):# Function to extract data from received packet
-        received_packet_length = len(packet)
-        return packet[0:(received_packet_length - 5)]
+    def seqnum_one(self, recv_pkt):
+        if recv_pkt[0] == 1:
+            return True
+        else:
+            return False
 
-    def deliver_data(data):# Function to deliver data
+    def extract(self, recv_pkt, data):
+        received_packet_length = len(recv_pkt)
+        return recv_pkt[0:(received_packet_length - 5)]
+
+    def deliver_data(self, data):
         global buffer
         buffer = buffer + data
         return
 
-    def make_pkt(seqNum, ack, checksum):# Function to make packet that will be delivered to sender
+    def make_pkt(self, ack, seqNum, checksum):
         packet = str(int(seqNum)).encode + ack + checksum
         return packet
 
-    def udt_send(packet): # Function to send packet to sender
+    def make_file(self, path):
+        with open(path, 'wb') as image:
+            for i, p in enumerate(self.packets):
+                skip = i * 1024  # skip variable holds number of bytes already stored
+                image.seek(skip)  # skip over bytes already stored as packets
+                image.write(p)  # writing packets to file
+
+    def udt_send(self, packet):
         sender_socket = socket(AF_INET, SOCK_DGRAM)
-        sender_socket.sendto(packet, (sender.destination, sender.port))
+        sender_socket.sendto(packet, (r.destination, r.port))
         sender_socket.close()
         return
 
-    def start(self): # Function to start
+    def start(self):
         self.packets = []
         while True:
             incoming, address = self.sockets.recvfrom(1024)
@@ -76,43 +92,34 @@ class Receiver:
             if len(incoming) < 1024:
                 break
 
-    def socket_bind(self): # Function to bind socket
-            self.sockets.bind(('', self.port))  # binds to the socket
+    def socket_bind(self):
+        self.sockets.bind(('', self.port))
 
-if __name__ == '__main__': # Main function begins here
-        r = Receiver(12000, socket(AF_INET, SOCK_DGRAM))
-        r.start()
-        recv_pkt = r.sockets.recvfrom(1024)
-        data = r.extract(recv_pkt)
 
-        if state == states[0]: # Conditional statement for first state
+if __name__ == '__main__':
+    r = Receiver(12000, socket(AF_INET, SOCK_DGRAM))
+    r.start()
 
-            if r.rdt_rcv(recv_pkt) and (r.corrupt(recv_pkt) or r.get_seq(recv_pkt) == 1):
-                if once_thru == 1:
-                    checksum = r.checksum(seqNum, data)
-                    send_pkt = r.make_pkt(1, ack, checksum)
-                    r.udt_send(send_pkt)
+    if state == states[0]:
+        if r.rdt_rcv(r.rcvpkt) and (r.corrupt(r.rcvpkt) or r.seqnum_one(r.rcvpkt)):
+            if oncethru == 1:
+                r.udt_send(r.sndpkt)
+        elif r.rdt_rcv(r.rcvpkt) and (not r.corrupt(r.rcvpkt)) and r.seqnum_zero(r.rcvpkt):
+            r.extract(r.rcvpkt, r.data)
+            r.deliver_data(r.data)
+            sndpkt = r.make_pkt(r.ack, 0, r.checksum)
+            r.udt_send(sndpkt)
+            oncethru = 1
+            state = states[1]  # Next State
 
-            elif r.rdt_rcv(recv_pkt) and (not r.corrupt(recv_pkt)) and r.get_seq(recv_pkt) == 0:
-                r.extract(recv_pkt, data)
-                r.deliver_data(data)
-                checksum = r.checksum(seqNum, data)
-                send_pkt = r.make_pkt(0, ack, checksum)
-                r.udt_send(send_pkt)
-                once_thru = 1
-                state = states[1]  # Next State
+    elif states == states[1]:
+        if r.rdt_rcv(r.rcvpkt) and (r.corrupt(r.rcvpkt) or r.seqnum_zero(r.rcvpkt)):
+            r.udt_send(r.sndpkt)
+        elif r.rdt_rcv(r.rcvpkt) and (not r.corrupt(r.rcvpkt)) and r.seqnum_one(r.rcvpkt):
+            r.extract(r.rcvpkt, r.data)
+            r.deliver_data(r.data)
+            sndpkt = r.make_pkt(r.ack, 1, r.checksum)
+            r.udt_send(sndpkt)
+            state = states[0]  # Next State
 
-        elif states == states[1]: # Conditional statement for second state
-
-            if r.rdt_rcv(recv_pkt) and (r.corrupt(recv_pkt) or r.get_seq(recv_pkt) == 0):
-                checksum = r.checksum(seqNum, data)
-                send_pkt = r.make_pkt(0, ack, checksum)
-                r.udt_send(send_pkt)
-
-            elif r.rdt_rcv(recv_pkt) and (not r.corrupt(recv_pkt)) and r.get_seq(recv_pkt) == 1:
-                r.extract(recv_pkt)
-                r.deliver_data(data)
-                checksum = r.checksum(seqNum, data)
-                send_pkt = r.make_pkt(1, ack, checksum)
-                r.udt_send(send_pkt)
-                state = states[0]  # Next State
+    r.make_file('../imgs/received_image.bmp')
