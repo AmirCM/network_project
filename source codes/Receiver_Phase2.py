@@ -91,6 +91,9 @@ if __name__ == '__main__':
                     once_thru = 1
                     state = states[1]  # Next State
 
+                    if len(extract) < 1024:
+                        break
+
         elif states == states[1]:
             if r.rdt_rcv():
                 if r.corrupt() or r.has_seqnum(1):
@@ -102,7 +105,8 @@ if __name__ == '__main__':
                     r.udt_send(sndpkt)
                     state = states[0]  # Next State
 
-        if len(extract) < 1024:
-            break
+                    if len(extract) < 1024:
+                        break
+
 
     make_file('../imgs/received_image.bmp', List)
