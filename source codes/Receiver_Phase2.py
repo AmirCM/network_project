@@ -7,7 +7,7 @@ state = states[0]
 buffer = b''
 once_thru = 0
 pkt_len = 1029
-
+ACK = 0xFF
 
 def checksum(data):
     ch = data[0:2]
@@ -54,18 +54,17 @@ class Receiver:
             return True
         return False
 
-    def extract(self, data: list):
+    def extract(self):
         pkt_len = int.from_bytes(self.recv_pkt[-5:-3], 'big')
-        data.append(self.recv_pkt[:pkt_len])
+        return self.recv_pkt[:pkt_len]
 
-    def deliver_data(self, data):
-        global buffer
-        buffer = buffer + data
-        return
-
-    def make_pkt(self, ack, seqNum, checksum):
-        packet = str(int(seqNum)).encode + ack + checksum
-        return packet
+    def make_pkt(self, ack: int, seq_num: int):
+        pkt_len = 1
+        pkt_len = pkt_len.to_bytes(2, 'big')
+        ack = ack.to_bytes(1, 'big')
+        seq_num = seq_num.to_bytes(2, 'big')
+        data = ack + pkt_len + seq_num
+        return data + checksum(data)
 
     def make_file(self, path):
         with open(path, 'wb') as image:
