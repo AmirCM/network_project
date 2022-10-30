@@ -21,19 +21,20 @@ def checksum(data):
     return ch
 
 
+def make_file(path):
+    with open(path, 'wb') as image:
+        for i, p in enumerate(self.packets):
+            skip = i * 1024  # skip variable holds number of bytes already stored
+            image.seek(skip)  # skip over bytes already stored as packets
+            image.write(p)  # writing packets to file
+
+
 class Receiver:
     def __init__(self, port):
-
         self.sockets = socket(AF_INET, SOCK_DGRAM)  # Receiver socket
         self.sockets.bind(('', port))  # Receiver socket bind
-
         self.dst_addr = None
-        self.packets = []  # Receiver packets
-        self.recv_pkt = []
-        self.data = None
-        self.ACK = None
-        self.checksum = None
-        self.seqNum = None
+        self.recv_pkt = None
 
     def __del__(self):
         self.sockets.close()
@@ -66,13 +67,6 @@ class Receiver:
         seq_num = seq_num.to_bytes(2, 'big')
         data = ack + pkt_len + seq_num
         return data + checksum(data)
-
-    def make_file(self, path):
-        with open(path, 'wb') as image:
-            for i, p in enumerate(self.packets):
-                skip = i * 1024  # skip variable holds number of bytes already stored
-                image.seek(skip)  # skip over bytes already stored as packets
-                image.write(p)  # writing packets to file
 
     def udt_send(self, packet):
         self.sockets.sendto(packet, self.dst_addr)
