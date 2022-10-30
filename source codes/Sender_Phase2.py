@@ -67,19 +67,21 @@ class Sender:
         self.sockets.sendto(data, (self.destination, self.port))
 
 
-
 if __name__ == '__main__':
     states = ['w4zero', 'w4Ack0', 'w4zero', 'w4Ack1']
-    state = states[0]
+
 
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
         s = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
 
         image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
         p = Packet(image)
-        p.make_packet()                              # creates all packets to send to server with all headers
+        p.make_packet()  # creates all packets to send to server with all headers
 
-        for packet in p.packets:
+        index = 0
+        packet = p.packets[index]
+        state = states[0]
+        while True:
             if state == states[0]:
                 s.rdt_send(packet)
                 state = states[1]
@@ -88,6 +90,8 @@ if __name__ == '__main__':
                 if s.rdt_rcv() and ((s.corrupt()) or s.has_seqnum(0)):
                     s.sockets.send(packet.encode())
                 elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
+                    index += 1
+                    packet = p.packets[index]
                     state = states[2]
 
             elif state == states[2]:
@@ -98,4 +102,6 @@ if __name__ == '__main__':
                 if s.rdt_rcv() and ((s.corrupt()) or s.has_seqnum(0)):
                     s.sockets.send(packet.encode())
                 elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
+                    index += 1
+                    packet = p.packets[index]
                     state = states[0]

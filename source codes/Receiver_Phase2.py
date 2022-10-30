@@ -108,5 +108,4 @@ if __name__ == '__main__':
                     if len(extract) < 1024:
                         break
 
-
     make_file('../imgs/received_image.bmp', List)
