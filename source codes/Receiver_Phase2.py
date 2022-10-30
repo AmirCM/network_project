@@ -78,14 +78,14 @@ if __name__ == '__main__':
     while True:
         if state == states[0]:
             if r.rdt_rcv() and (r.corrupt() or r.has_seqnum(1)):
-                if oncethru == 1:
+                if once_thru == 1:
                     r.udt_send(r.sndpkt)
             elif r.rdt_rcv() and (not r.corrupt()) and r.has_seqnum(0):
                 extract = r.extract()
                 List.append(extract)
                 sndpkt = r.make_pkt(ACK, 0,)
                 r.udt_send(sndpkt)
-                oncethru = 1
+                once_thru = 1
                 state = states[1]  # Next State
 
         elif states == states[1]:
