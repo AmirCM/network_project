@@ -43,12 +43,11 @@ class Receiver:
             return True
         return False
 
-    def corrupt(self, recv_pkt):
-        ch = self.checksum(recv_pkt[0:(len(recv_pkt) - 2)])
-        if ch == recv_pkt[len(recv_pkt - 2):]:
-            True
-        else:
-            False
+    def corrupt(self):
+        ch = checksum(self.recv_pkt[: -2])      # Compute ch on the incoming pkt
+        if ch == self.recv_pkt[-2:]:            # Compare ch to the incoming pkt ch
+            return True
+        return False
 
     def seqnum_zero(self, recv_pkt):
         if recv_pkt[0] == 0:
