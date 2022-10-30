@@ -5,7 +5,7 @@ class Packet:
 
     def __init__(self, data):
 
-        self.packets = []   # file packet
+        self.packets = []  # file packet
         self.data = data
 
     def checksum(self, data):
@@ -89,11 +89,12 @@ class Sender:
             return False
 
     def corrupt(self, rcvpkt):
-        ch = self.checksum(rcvpkt[0:(len(rcvpkt)-3)])
-        if ch == rcvpkt[len(rcvpkt-2):]:
+        ch = self.checksum(rcvpkt[0:(len(rcvpkt) - 3)])
+        if ch == rcvpkt[len(rcvpkt - 2):]:
             return True
         else:
             return False
+
 
 if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
@@ -101,7 +102,7 @@ if __name__ == '__main__':
 
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
     p = Packet(image)
-    p.make_packet() # creates all packets to send to server
+    p.make_packet()  # creates all packets to send to server
 
     states = ['w4zero', 'w4Ack0', 'w4zero', 'w4Ack1']
     state = states[0]
@@ -126,4 +127,3 @@ if __name__ == '__main__':
                 s.sockets.send(packet.encode())
             elif s.receive_packet() and (not s.corrupt(s.rcvpkt)) and s.seqnum_one(s.rcvpkt):
                 state = states[0]
-
