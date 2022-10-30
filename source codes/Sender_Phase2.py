@@ -109,3 +109,4 @@ if __name__ == '__main__':
                         break
                     packet = p.packets[index]
                     state = states[0]
+            print(state)

@@ -77,6 +77,7 @@ if __name__ == '__main__':
     List = []
     extract = None
     sndpkt = None
+    once_thru = 0
     while True:
         if state == states[0]:
             if r.rdt_rcv():
@@ -107,5 +108,5 @@ if __name__ == '__main__':
 
                     if len(extract) < 1024:
                         break
-
+        print(state)
     make_file('../imgs/received_image.bmp', List)
