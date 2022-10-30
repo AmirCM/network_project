@@ -70,7 +70,6 @@ class Sender:
 if __name__ == '__main__':
     states = ['w4zero', 'w4Ack0', 'w4zero', 'w4Ack1']
 
-
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
         s = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
 
@@ -81,6 +80,7 @@ if __name__ == '__main__':
         index = 0
         packet = p.packets[index]
         state = states[0]
+        packets_len = len(p.packets)
         while True:
             if state == states[0]:
                 s.rdt_send(packet)
@@ -91,6 +91,8 @@ if __name__ == '__main__':
                     s.sockets.send(packet.encode())
                 elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
                     index += 1
+                    if index > packets_len:
+                        break
                     packet = p.packets[index]
                     state = states[2]
 
@@ -103,5 +105,7 @@ if __name__ == '__main__':
                     s.sockets.send(packet.encode())
                 elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
                     index += 1
+                    if index > packets_len:
+                        break
                     packet = p.packets[index]
                     state = states[0]
