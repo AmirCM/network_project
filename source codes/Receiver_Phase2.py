@@ -49,17 +49,11 @@ class Receiver:
             return True
         return False
 
-    def seqnum_zero(self, recv_pkt):
-        if recv_pkt[0] == 0:
+    def has_seqnum(self, seq_num):
+        if int.from_bytes(self.recv_pkt[-3], 'big') == seq_num:
             return True
-        else:
-            return False
+        return False
 
-    def seqnum_one(self, recv_pkt):
-        if recv_pkt[0] == 1:
-            return True
-        else:
-            return False
 
     def extract(self, recv_pkt, data):
         received_packet_length = len(recv_pkt)
