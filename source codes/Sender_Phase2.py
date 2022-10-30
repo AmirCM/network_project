@@ -39,7 +39,7 @@ class Packet:
 
 
 class Sender:
-    def __init__(self, port, destination, sockets):
+    def __init__(self, port: int, destination, sockets: socket):
         self.rcvpkt = None
         self.port = port  # server port number
         self.destination = destination  # server name
@@ -63,6 +63,10 @@ class Sender:
             return True
         return False
 
+    def rdt_send(self, data):
+        self.sockets.sendto(data, (self.destination, self.port))
+
+
 
 if __name__ == '__main__':
     states = ['w4zero', 'w4Ack0', 'w4zero', 'w4Ack1']
@@ -77,21 +81,21 @@ if __name__ == '__main__':
 
         for packet in p.packets:
             if state == states[0]:
-                s.sockets.send(packet)
+                s.rdt_send(packet)
                 state = states[1]
 
             elif states == states[1]:
-                if s.rdt_rcv() and ((s.corrupt(s.rcvpkt)) or s.has_seqnum(s.rcvpkt, 0)):
+                if s.rdt_rcv() and ((s.corrupt()) or s.has_seqnum(0)):
                     s.sockets.send(packet.encode())
-                elif s.rdt_rcv() and (not s.corrupt(s.rcvpkt)) and s.has_seqnum(s.rcvpkt, 1):
+                elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
                     state = states[2]
 
             elif state == states[2]:
-                s.sockets.send(packet.encode())
+                s.rdt_send(packet)
                 state = states[3]
 
             elif state == states[3]:
-                if s.rdt_rcv() and ((s.corrupt(s.rcvpkt)) or s.has_seqnum(s.rcvpkt, 0)):
+                if s.rdt_rcv() and ((s.corrupt()) or s.has_seqnum(0)):
                     s.sockets.send(packet.encode())
-                elif s.rdt_rcv() and (not s.corrupt(s.rcvpkt)) and s.has_seqnum(s.rcvpkt, 1):
+                elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
                     state = states[0]
