@@ -84,16 +84,16 @@ class Sender:
     def receive_packet(self):
         self.rcvpkt, serveraddress = self.sockets.recvfrom(4)
         if self.rcvpkt:
-            True
+            return True
         else:
-            False
+            return False
 
     def corrupt(self, rcvpkt):
         ch = self.checksum(rcvpkt[0:(len(rcvpkt)-3)])
         if ch == rcvpkt[len(rcvpkt-2):]:
-            True
+            return True
         else:
-            False
+            return False
 
 if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
