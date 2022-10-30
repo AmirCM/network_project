@@ -87,7 +87,7 @@ class Receiver:
     def start(self):
         self.packets = []
         while True:
-            incoming, address = self.sockets.recvfrom(1024)
+            incoming, address = self.sockets.recvfrom(1027)
             self.packets.append(incoming)  # packet to array
             if len(incoming) < 1024:
                 break
