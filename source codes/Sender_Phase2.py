@@ -31,7 +31,7 @@ class Packet:
 
             seqnum = i % 2
 
-            chunk = chunk + seqnum.to_bytes(1, 'big') + len(chunk)
+            chunk = chunk + seqnum.to_bytes(1, 'big') + str(len(chunk)).encode()
 
             ch = self.checksum(chunk)
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     for packet in p.packets:
         if state == states[0]:
-            s.sockets.send(packet.encode())
+            s.sockets.send(packet)
             state = states[1]
 
         elif states == states[1]:
