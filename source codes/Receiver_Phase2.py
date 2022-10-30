@@ -74,28 +74,31 @@ class Receiver:
 
 if __name__ == '__main__':
     r = Receiver(12000)
-
+    List = []
     while True:
         if state == states[0]:
-            if r.rdt_rcv(r.rcvpkt) and (r.corrupt(r.rcvpkt) or r.seqnum_one(r.rcvpkt)):
-                if oncethru == 1:
+            if r.rdt_rcv() and (r.corrupt() or r.has_seqnum(1)):
+                if once_thru == 1:
                     r.udt_send(r.sndpkt)
-            elif r.rdt_rcv(r.rcvpkt) and (not r.corrupt(r.rcvpkt)) and r.seqnum_zero(r.rcvpkt):
-                r.extract(r.rcvpkt, r.data)
-                r.deliver_data(r.data)
-                sndpkt = r.make_pkt(r.ack, 0, r.checksum)
+            elif r.rdt_rcv() and (not r.corrupt()) and r.has_seqnum(0):
+                extract = r.extract()
+                List.append(extract)
+                sndpkt = r.make_pkt(ACK, 0)
                 r.udt_send(sndpkt)
-                oncethru = 1
+                once_thru = 1
                 state = states[1]  # Next State
 
         elif states == states[1]:
-            if r.rdt_rcv(r.rcvpkt) and (r.corrupt(r.rcvpkt) or r.seqnum_zero(r.rcvpkt)):
+            if r.rdt_rcv() and (r.corrupt() or r.has_seqnum(1)):
                 r.udt_send(r.sndpkt)
-            elif r.rdt_rcv(r.rcvpkt) and (not r.corrupt(r.rcvpkt)) and r.seqnum_one(r.rcvpkt):
-                r.extract(r.rcvpkt, r.data)
-                r.deliver_data(r.data)
-                sndpkt = r.make_pkt(r.ack, 1, r.checksum)
+            elif r.rdt_rcv() and (not r.corrupt()) and r.has_seqnum(0):
+                extract = r.extract()
+                List.append(extract)
+                sndpkt = r.make_pkt(ACK, 1)
                 r.udt_send(sndpkt)
                 state = states[0]  # Next State
+
+        if len(List) < 1024:
+            break
 
         r.make_file('../imgs/received_image.bmp')
