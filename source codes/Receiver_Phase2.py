@@ -37,27 +37,26 @@ class Receiver:
     def __del__(self):
         self.sockets.close()
 
-    def rdt_rcv(self):
+    def rdt_rcv(self) -> bool:
         self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
         if self.recv_pkt:
             return True
         return False
 
-    def corrupt(self):
+    def corrupt(self) -> bool:
         ch = checksum(self.recv_pkt[: -2])      # Compute ch on the incoming pkt
         if ch == self.recv_pkt[-2:]:            # Compare ch to the incoming pkt ch
             return True
         return False
 
-    def has_seqnum(self, seq_num):
+    def has_seqnum(self, seq_num: int) -> bool:
         if int.from_bytes(self.recv_pkt[-3], 'big') == seq_num:
             return True
         return False
 
-
-    def extract(self, recv_pkt, data):
-        received_packet_length = len(recv_pkt)
-        return recv_pkt[0:(received_packet_length - 5)]
+    def extract(self, data: list):
+        pkt_len = int.from_bytes(self.recv_pkt[-5:-3], 'big')
+        data.append(self.recv_pkt[:pkt_len])
 
     def deliver_data(self, data):
         global buffer
