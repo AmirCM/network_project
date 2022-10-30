@@ -9,6 +9,7 @@ once_thru = 0
 pkt_len = 1029
 ACK = 0xFF
 
+
 def checksum(data):
     ch = data[0:2]
     for i in range(2, len(data), 2):
@@ -44,8 +45,8 @@ class Receiver:
         return False
 
     def corrupt(self) -> bool:
-        ch = checksum(self.recv_pkt[: -2])      # Compute ch on the incoming pkt
-        if ch == self.recv_pkt[-2:]:            # Compare ch to the incoming pkt ch
+        ch = checksum(self.recv_pkt[: -2])  # Compute ch on the incoming pkt
+        if ch == self.recv_pkt[-2:]:  # Compare ch to the incoming pkt ch
             return True
         return False
 
@@ -74,18 +75,7 @@ class Receiver:
                 image.write(p)  # writing packets to file
 
     def udt_send(self, packet):
-        sender_socket = socket(AF_INET, SOCK_DGRAM)
-        sender_socket.sendto(packet, (r.destination, r.port))
-        sender_socket.close()
-        return
-
-    def start(self):
-        self.packets = []
-        while True:
-            incoming, address = self.sockets.recvfrom(pkt_len)
-            self.packets.append(incoming)  # packet to array
-            if len(incoming) < 1027:
-                break
+        self.sockets.sendto(packet, self.dst_addr)
 
 
 if __name__ == '__main__':
