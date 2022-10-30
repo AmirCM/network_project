@@ -89,7 +89,7 @@ class Sender:
             False
 
     def corrupt(self, rcvpkt):
-        ch = self.checksum(rcvpkt[0:(len(rcvpkt)-2)])
+        ch = self.checksum(rcvpkt[0:(len(rcvpkt)-3)])
         if ch == rcvpkt[len(rcvpkt-2):]:
             True
         else:
