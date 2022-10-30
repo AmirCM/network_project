@@ -21,9 +21,9 @@ def checksum(data):
     return ch
 
 
-def make_file(path):
+def make_file(path, data):
     with open(path, 'wb') as image:
-        for i, p in enumerate(self.packets):
+        for i, p in enumerate(data):
             skip = i * 1024  # skip variable holds number of bytes already stored
             image.seek(skip)  # skip over bytes already stored as packets
             image.write(p)  # writing packets to file
@@ -75,30 +75,34 @@ class Receiver:
 if __name__ == '__main__':
     r = Receiver(12000)
     List = []
+    extract = None
+    sndpkt = None
     while True:
         if state == states[0]:
-            if r.rdt_rcv() and (r.corrupt() or r.has_seqnum(1)):
-                if once_thru == 1:
-                    r.udt_send(r.sndpkt)
-            elif r.rdt_rcv() and (not r.corrupt()) and r.has_seqnum(0):
-                extract = r.extract()
-                List.append(extract)
-                sndpkt = r.make_pkt(ACK, 0)
-                r.udt_send(sndpkt)
-                once_thru = 1
-                state = states[1]  # Next State
+            if r.rdt_rcv():
+                if r.corrupt() or r.has_seqnum(1):
+                    if once_thru == 1:
+                        r.udt_send(sndpkt)
+                elif not r.corrupt() and r.has_seqnum(0):
+                    extract = r.extract()
+                    List.append(extract)
+                    sndpkt = r.make_pkt(ACK, 0)
+                    r.udt_send(sndpkt)
+                    once_thru = 1
+                    state = states[1]  # Next State
 
         elif states == states[1]:
-            if r.rdt_rcv() and (r.corrupt() or r.has_seqnum(1)):
-                r.udt_send(r.sndpkt)
-            elif r.rdt_rcv() and (not r.corrupt()) and r.has_seqnum(0):
-                extract = r.extract()
-                List.append(extract)
-                sndpkt = r.make_pkt(ACK, 1)
-                r.udt_send(sndpkt)
-                state = states[0]  # Next State
+            if r.rdt_rcv():
+                if r.corrupt() or r.has_seqnum(1):
+                    r.udt_send(sndpkt)
+                elif not r.corrupt() and r.has_seqnum(0):
+                    extract = r.extract()
+                    List.append(extract)
+                    sndpkt = r.make_pkt(ACK, 1)
+                    r.udt_send(sndpkt)
+                    state = states[0]  # Next State
 
-        if len(List) < 1024:
+        if len(extract) < 1024:
             break
 
-        r.make_file('../imgs/received_image.bmp')
+    make_file('../imgs/received_image.bmp', List)
