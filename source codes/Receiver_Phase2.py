@@ -7,7 +7,7 @@ state = states[0]
 buffer = b''
 once_thru = 0
 pkt_len = 1029
-ACK = 0xFF
+ACK = 1
 
 
 def checksum(data):
@@ -48,11 +48,13 @@ class Receiver:
     def corrupt(self) -> bool:
         ch = checksum(self.recv_pkt[: -2])  # Compute ch on the incoming pkt
         if ch == self.recv_pkt[-2:]:  # Compare ch to the incoming pkt ch
-            return True
-        return False
+            return False
+        print('Faulty checksum ', end='')
+        return True
 
     def has_seqnum(self, seq_num: int) -> bool:
-        if int.from_bytes(self.recv_pkt[-3], 'big') == seq_num:
+        if self.recv_pkt[-3] == seq_num:
+            print(f'Seq: {seq_num}')
             return True
         return False
 
@@ -64,7 +66,7 @@ class Receiver:
         pkt_len = 1
         pkt_len = pkt_len.to_bytes(2, 'big')
         ack = ack.to_bytes(1, 'big')
-        seq_num = seq_num.to_bytes(2, 'big')
+        seq_num = seq_num.to_bytes(1, 'big')
         data = ack + pkt_len + seq_num
         return data + checksum(data)
 
@@ -78,35 +80,44 @@ if __name__ == '__main__':
     extract = None
     sndpkt = None
     once_thru = 0
+    s = None
     while True:
         if state == states[0]:
             if r.rdt_rcv():
                 if r.corrupt() or r.has_seqnum(1):
+                    print('Corrupt')
                     if once_thru == 1:
                         r.udt_send(sndpkt)
                 elif not r.corrupt() and r.has_seqnum(0):
                     extract = r.extract()
+                    print(f'Received L= {len(extract)} ', end='')
                     List.append(extract)
                     sndpkt = r.make_pkt(ACK, 0)
                     r.udt_send(sndpkt)
                     once_thru = 1
                     state = states[1]  # Next State
-
+                    print(f'Sent ACK {len(sndpkt)} S0')
                     if len(extract) < 1024:
                         break
-
-        elif states == states[1]:
+        elif state == states[1]:
             if r.rdt_rcv():
-                if r.corrupt() or r.has_seqnum(1):
+                print(r.recv_pkt)
+                if r.corrupt() or r.has_seqnum(0):
+                    print('Corrupt')
                     r.udt_send(sndpkt)
-                elif not r.corrupt() and r.has_seqnum(0):
+                elif not r.corrupt() and r.has_seqnum(1):
                     extract = r.extract()
+                    print(f'Received L= {len(extract)} ', end='')
                     List.append(extract)
                     sndpkt = r.make_pkt(ACK, 1)
                     r.udt_send(sndpkt)
                     state = states[0]  # Next State
-
+                    print(f'Sent ACK {len(sndpkt)} S1')
                     if len(extract) < 1024:
                         break
-        print(state)
+
+        if s != state:
+            print(state, len(List))
+            s = state
+
     make_file('../imgs/received_image.bmp', List)

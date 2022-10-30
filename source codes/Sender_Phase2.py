@@ -46,11 +46,6 @@ class Sender:
         self.sockets = sockets  # client socket
         self.packets = []  # packet array
 
-    def has_seqnum(self, seq_num: int) -> bool:
-        if int.from_bytes(self.rcvpkt[-3], 'big') == seq_num:
-            return True
-        return False
-
     def rdt_rcv(self):
         self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
         if self.rcvpkt:
@@ -58,24 +53,32 @@ class Sender:
         return False
 
     def corrupt(self):
-        ch = checksum(self.rcvpkt[:-2])  # Compute ch on the incoming pkt
-        if ch == self.rcvpkt[-2:]:  # Compare ch to the incoming pkt ch
-            return True
-        return False
+        ch = checksum(self.rcvpkt[:-2])     # Compute ch on the incoming pkt
+        if ch == self.rcvpkt[-2:]:          # Compare ch to the incoming pkt ch
+            return False
+        print('Faulty checksum ', end='')
+        return True
 
     def rdt_send(self, data):
         self.sockets.sendto(data, (self.destination, self.port))
 
+    def isAck(self, seq_num: int):
+        if self.rcvpkt[-3] == seq_num:
+            if self.rcvpkt[0] == 1:
+                print(f'Ack for S{seq_num} ', end='')
+                return True
+        print(f'Nack for S{seq_num} ', end='')
+        return False
+
 
 if __name__ == '__main__':
-    states = ['w4zero', 'w4Ack0', 'w4zero', 'w4Ack1']
-
+    states = ['w4zero', 'w4Ack0', 'w4one', 'w4Ack1']
+    image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
+    p = Packet(image)
+    p.make_packet()  # creates all packets to send to server with all headers
+    s = None
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        s = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
-
-        image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
-        p = Packet(image)
-        p.make_packet()  # creates all packets to send to server with all headers
+        sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
 
         index = 0
         packet = p.packets[index]
@@ -83,30 +86,39 @@ if __name__ == '__main__':
         packets_len = len(p.packets)
         while True:
             if state == states[0]:
-                s.rdt_send(packet)
+                sender.rdt_send(packet)
                 state = states[1]
+                print(f'Sent even packet')
 
-            elif states == states[1]:
-                if s.rdt_rcv() and ((s.corrupt()) or s.has_seqnum(0)):
-                    s.sockets.send(packet.encode())
-                elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
-                    index += 1
-                    if index > packets_len:
-                        break
-                    packet = p.packets[index]
-                    state = states[2]
+            elif state == states[1]:
+                if sender.rdt_rcv():
+                    if sender.corrupt() or sender.isAck(1):
+                        print('Resend Packet')
+                        sender.rdt_send(packet)
+                    elif not sender.corrupt() and sender.isAck(0):
+                        index += 1
+                        if index >= packets_len:
+                            break
+                        packet = p.packets[index]
+                        state = states[2]
+                        print(f'Next Packet')
 
             elif state == states[2]:
-                s.rdt_send(packet)
+                sender.rdt_send(packet)
                 state = states[3]
+                print(f'Sent odd packet')
 
             elif state == states[3]:
-                if s.rdt_rcv() and ((s.corrupt()) or s.has_seqnum(0)):
-                    s.sockets.send(packet.encode())
-                elif s.rdt_rcv() and (not s.corrupt()) and s.has_seqnum(1):
-                    index += 1
-                    if index > packets_len:
-                        break
-                    packet = p.packets[index]
-                    state = states[0]
-            print(state)
+                if sender.rdt_rcv():
+                    if sender.corrupt() or sender.isAck(0):
+                        sender.rdt_send(packet)
+                    elif not sender.corrupt() and sender.isAck(1):
+                        index += 1
+                        if index >= packets_len:
+                            break
+                        packet = p.packets[index]
+                        state = states[0]
+
+            if s != state:
+                print(state)
+                s = state
