@@ -61,16 +61,13 @@ class Sender:
         self.sockets = sockets  # client socket
         self.packets = []  # packet array
 
-    def socket_close(self):
-        self.sockets.close()
-
     def has_seqnum(self, seq_num: int) -> bool:
-        if int.from_bytes(self.recv_pkt[-3], 'big') == seq_num:
+        if int.from_bytes(self.rcvpkt[-3], 'big') == seq_num:
             return True
         return False
 
-    def receive_packet(self):
-        self.rcvpkt, serveraddress = self.sockets.recvfrom(4)
+    def rdt_rcv(self):
+        self.rcvpkt = self.sockets.recv(6)       # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
         if self.rcvpkt:
             return True
         else:
@@ -101,9 +98,9 @@ if __name__ == '__main__':
                 state = states[1]
 
             elif states == states[1]:
-                if s.receive_packet() and ((s.corrupt(s.rcvpkt)) or s.has_seqnum(s.rcvpkt, 0)):
+                if s.rdt_rcv() and ((s.corrupt(s.rcvpkt)) or s.has_seqnum(s.rcvpkt, 0)):
                     s.sockets.send(packet.encode())
-                elif s.receive_packet() and (not s.corrupt(s.rcvpkt)) and s.has_seqnum(s.rcvpkt, 1):
+                elif s.rdt_rcv() and (not s.corrupt(s.rcvpkt)) and s.has_seqnum(s.rcvpkt, 1):
                     state = states[2]
 
             elif state == states[2]:
@@ -111,7 +108,7 @@ if __name__ == '__main__':
                 state = states[3]
 
             elif state == states[3]:
-                if s.receive_packet() and ((s.corrupt(s.rcvpkt)) or s.has_seqnum(s.rcvpkt, 0)):
+                if s.rdt_rcv() and ((s.corrupt(s.rcvpkt)) or s.has_seqnum(s.rcvpkt, 0)):
                     s.sockets.send(packet.encode())
-                elif s.receive_packet() and (not s.corrupt(s.rcvpkt)) and s.has_seqnum(s.rcvpkt, 1):
+                elif s.rdt_rcv() and (not s.corrupt(s.rcvpkt)) and s.has_seqnum(s.rcvpkt, 1):
                     state = states[0]
