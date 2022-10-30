@@ -83,7 +83,7 @@ if __name__ == '__main__':
             elif r.rdt_rcv() and (not r.corrupt()) and r.has_seqnum(0):
                 extract = r.extract()
                 List.append(extract)
-                sndpkt = r.make_pkt(ACK, 0,)
+                sndpkt = r.make_pkt(ACK, 0)
                 r.udt_send(sndpkt)
                 once_thru = 1
                 state = states[1]  # Next State
