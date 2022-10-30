@@ -1,4 +1,4 @@
-# Phase 2 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
+# Phase 3 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
 ___
 Implement RDT 1.0 over a reliable UDP channel. Transfer a BMP file between a UDP client process and a UDP server process. 
 
@@ -28,35 +28,11 @@ ___
 * The bmp file is opened and the make file is utilized.
 * The image is then printed.
 
-# Client GUI Code
-___
-![Alt text](imgs/GUI_Client.png?raw=true "Optional Title")
-
-# Server GUI Code
-___
-![Alt text](imgs/GUI_Server.png?raw=true "Optional Title")
-
 # Sender/Receiver Execution
 ___
 ![Alt text](imgs/Sender_Receiver_Execution.png?raw=true "Optional Title")
 * This image illustrates the transferred BMP file between a UDP client process and a UDP server process.
 
-# GUI Execution
-___
-![Alt text](imgs/Server_GUI.png?raw=true "Optional Title")
-* Server_GUI Initialized.
-
-![Alt text](imgs/Client_GUI.png?raw=true "Optional Title")
-* Client GUI Initialized.
-
-![Alt text](imgs/Client_Image_Selected.png?raw=true "Optional Title")
-* Selected BMP file that will be transferred between a UDP client process and a UDP server process.
-
-![Alt text](imgs/Incoming_Image_Received_Server.png?raw=true "Optional Title")
-* Incoming image message displayed on Receiver GUI.
-
-![Alt text](imgs/Received_Image_GUI_Server.png?raw=true "Optional Title")
-* Image received at Receiver GUI.
 
 
 
