@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
             elif state == states[1]:
                 if sender.rdt_rcv():
-                    if sender.corrupt() or sender.isAck(1):
+                    if sender.corrupt() or not sender.isAck(0):
                         print('Resend Packet')
                         sender.rdt_send(packet)
                     elif not sender.corrupt() and sender.isAck(0):
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
             elif state == states[3]:
                 if sender.rdt_rcv():
-                    if sender.corrupt() or sender.isAck(0):
+                    if sender.corrupt() or not sender.isAck(1):
                         sender.rdt_send(packet)
                     elif not sender.corrupt() and sender.isAck(1):
                         index += 1

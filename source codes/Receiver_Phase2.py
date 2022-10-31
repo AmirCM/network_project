@@ -1,6 +1,7 @@
 import socket
 import sys
 from socket import *  # imports socket module to enable network communication
+import numpy as np
 
 states = ['w4zero', 'w4one']
 state = states[0]
@@ -29,6 +30,18 @@ def make_file(path, data):
             image.write(p)  # writing packets to file
 
 
+def make_noise_pkt(ack: int, seq_num: int):
+    pkt_len = 1
+    pkt_len = pkt_len.to_bytes(2, 'big')
+    ack = ack.to_bytes(1, 'big')
+    seq_num = seq_num.to_bytes(1, 'big')
+    data = ack + pkt_len + seq_num
+    ch = checksum(data)
+    ack = 0
+    ack = ack.to_bytes(1, 'big')
+    return ack + pkt_len + seq_num + ch
+
+
 class Receiver:
     def __init__(self, port):
         self.sockets = socket(AF_INET, SOCK_DGRAM)  # Receiver socket
@@ -54,7 +67,7 @@ class Receiver:
 
     def has_seqnum(self, seq_num: int) -> bool:
         if self.recv_pkt[-3] == seq_num:
-            print(f'Seq: {seq_num}')
+            # print(f'Seq: {seq_num}')
             return True
         return False
 
@@ -74,6 +87,8 @@ class Receiver:
         self.sockets.sendto(packet, self.dst_addr)
 
 
+p = 0.01
+
 if __name__ == '__main__':
     r = Receiver(12000)
     List = []
@@ -85,15 +100,22 @@ if __name__ == '__main__':
         if state == states[0]:
             if r.rdt_rcv():
                 if r.corrupt() or r.has_seqnum(1):
-                    print('Corrupt')
                     if once_thru == 1:
                         r.udt_send(sndpkt)
+                        print('Corrupt Resend', end='')
                 elif not r.corrupt() and r.has_seqnum(0):
                     extract = r.extract()
                     print(f'Received L= {len(extract)} ', end='')
                     List.append(extract)
+
                     sndpkt = r.make_pkt(ACK, 0)
-                    r.udt_send(sndpkt)
+                    if np.random.binomial(1, p):
+                        noise_sndpkt = make_noise_pkt(ACK, 1)
+                        r.udt_send(noise_sndpkt)
+                        print('Noise', end='')
+                    else:
+                        r.udt_send(sndpkt)
+
                     once_thru = 1
                     state = states[1]  # Next State
                     print(f'Sent ACK {len(sndpkt)} S0')
@@ -101,16 +123,22 @@ if __name__ == '__main__':
                         break
         elif state == states[1]:
             if r.rdt_rcv():
-                print(r.recv_pkt)
                 if r.corrupt() or r.has_seqnum(0):
-                    print('Corrupt')
+                    print('Corrupt', end='')
                     r.udt_send(sndpkt)
                 elif not r.corrupt() and r.has_seqnum(1):
                     extract = r.extract()
                     print(f'Received L= {len(extract)} ', end='')
                     List.append(extract)
+
                     sndpkt = r.make_pkt(ACK, 1)
-                    r.udt_send(sndpkt)
+                    if np.random.binomial(1, p):
+                        noise_sndpkt = make_noise_pkt(ACK, 1)
+                        r.udt_send(noise_sndpkt)
+                        print('Noise', end='')
+                    else:
+                        r.udt_send(sndpkt)
+
                     state = states[0]  # Next State
                     print(f'Sent ACK {len(sndpkt)} S1')
                     if len(extract) < 1024:
