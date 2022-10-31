@@ -1,5 +1,8 @@
 from socket import *  # imports socket module to enable network communication
+import numpy as np
 
+
+error_pobability = 0.01
 
 def checksum(data):
     ch = data[0:2]
@@ -60,6 +63,8 @@ class Sender:
         return True
 
     def rdt_send(self, data):
+        if np.random.binomial(1, error_pobability):
+            data = data_pkt_error(data)
         self.sockets.sendto(data, (self.destination, self.port))
 
     def isAck(self, seq_num: int):
@@ -69,6 +74,14 @@ class Sender:
                 return True
         print(f'Nack for S{seq_num} ', end='')
         return False
+
+def data_pkt_error(pkt: bytes):
+    error = int(np.random.randint(0, 255,1)[0])
+    new_pkt = pkt[:error] + error.to_bytes(1, 'big') + pkt[error + 1:]
+    print("## -------ERROR---------  ##", f'Old ch= {checksum(pkt)} New ch= {checksum(new_pkt)}', "## -------ERROR--------- ##")
+    return new_pkt
+
+
 
 
 if __name__ == '__main__':
