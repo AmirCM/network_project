@@ -16,6 +16,7 @@ Submitted Files:
 - Receiver_Phase3.py - Receive packets, ensures data integrity, and sends acknowledgement back to sender. Reconstructs the image
 - select_me.bmp - BMP file used for transfer
 - design.md - Design document
+- CompletionTime_RawData.xlsx - Excel file containing the raw data for completion time for all three options at different error amounts
 
 Sender/Receiver Instruction
 ----------------------------------------------------------------------
