@@ -58,6 +58,9 @@ ___
 #  Plot Illustrating Completion Time For All Three Options  
 ___
 ![Alt text](imgs/CompletionTimeGraph.jpg?raw=true "Optional Title")
-* This image illustrates the completion time for all 3 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%. 
+* This image illustrates the completion time for all 3 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%.
+* Option 1 does not have a curve since it is only run with no errors, for which it had a completion time of about 0.81 seconds
+* From the graph, the completion time increases as the error amount rises.
+* Option 3, involving data packet error, had the longer completion time as error amount increased compared to option 2, involving ACK packet error.
 
 
