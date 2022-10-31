@@ -5,7 +5,7 @@ Error handling for image file transfer including no loss/bit-errors, ACK packet 
 
 # Sender Code
 ___
-![Alt text](imgs/Sender_Class.png?raw=true "Optional Title")
+![Alt text](imgs/Packet_Class.png?raw=true "Optional Title")
 * This snapshot illustrates the packet class created to construct the packets that will be sent to the receiver.
 * This class utilizes the make function to construct a package which consists of data, a sequence number, data length, 
 
