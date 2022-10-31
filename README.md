@@ -22,8 +22,8 @@ Sender/Receiver Instruction
   * Save the provided BMP file to the appropriate directory. (in imgs sub directory)
   * Ensure that the NumPy module is installed when using PyCharm IDE (done by running "pip install numpy" in command line).
   * For option 1 (no loss/bit-errors), ensure the variable "error_probability" in the sender file and variable "p" in receiver file are set to 0
-  * For option 2 (ACK packet bit-error), only the "error_probability" variable in the sender file should equal zero. 
-  * For option 3 (data packet bit-error), only the "p" variable in the receiver file should equal zero.
+  * For option 2 (ACK packet bit-error), only the "error_probability" variable in the sender file should equal zero. The other variable should be set to a decimal amount, representing a percentage.
+  * For option 3 (data packet bit-error), only the "p" variable in the receiver file should equal zero. The other variable should be set to a decimal amount, representing a percentage.
   * Run the Receiver_Phase3.py first, then run Sender_Phase3.py.
   * Once the BMP file has been transferred between the client and server it will be saved in the project folder.
   * Note: BMP file should be 799 KB and should be named "select_me.bmp" and each packet contains 1024 bytes of data
