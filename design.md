@@ -62,7 +62,7 @@ ___
 ![Alt text](imgs/ExecutionEnd_Sender.jpg?raw=true "Optional Title")
 * Commandline for finished sender file execution
 
-![Alt text](imgs/ExecutionEnd_Receiver.jpg?raw=true "Optional Title")
+![Alt text](imgs/ExecutionStart_Receiver.jpg?raw=true "Optional Title")
 * Commandline for starting receiver file execution
 
 ![Alt text](imgs/ExecutionEnd_Receiver.jpg?raw=true "Optional Title")
