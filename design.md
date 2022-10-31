@@ -6,15 +6,17 @@ Error handling for image file transfer including no loss/bit-errors, ACK packet 
 # Sender Code
 ___
 ![Alt text](imgs/Sender_Class.png?raw=true "Optional Title")
+* This snapshot illustrates the packet class created to construct the packets that will be sent to the receiver.
+* This class utilizes the make function to construct a package which consists of data, a sequence number, data length, 
+
+![Alt text](imgs/Sender_Class.png?raw=true "Optional Title")
 * This snapshot shows the sender class created, with methods to parse packets to the receiver.
-* Class contains attributes for the serverport, server name, socket, and packet array
-* make_packet() method opens the bmp file, and reads 1024B packets of the file at a time, storing these packets in an array
-* seek() allows for skipping over bytes already read, end of file found when a packet is less than 1024B
+* The sender class employs several functions to implement the desired methodologies.
+* The functions included in the sender class are as follows:
 
 ![Alt text](imgs/Sender_Main.png?raw=true "Optional Title")
 * This screenshot illustrate the main function created to implement the class methods and functions.
 * The main function utilizes conditional staements to move through the four states of the sender finite state machine.
-
 
 # Receiver Code
 ___
@@ -26,7 +28,7 @@ ___
 
 # Checksum
 ___
-
+![Alt text](imgs/Checksum.png?raw=true "Optional Title")
 * This screenshot illustrates the code that was created to implement the checksum.
 
 # Sender/Receiver Execution
