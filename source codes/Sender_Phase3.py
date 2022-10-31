@@ -2,7 +2,7 @@ from socket import *  # imports socket module to enable network communication
 import numpy as np
 
 
-error_pobability = 0.01
+error_probability = 0.01
 
 def checksum(data):
     ch = data[0:2]
@@ -63,7 +63,7 @@ class Sender:
         return True
 
     def rdt_send(self, data):
-        if np.random.binomial(1, error_pobability):
+        if np.random.binomial(1, error_probability):
             data = data_pkt_error(data)
         self.sockets.sendto(data, (self.destination, self.port))
 
