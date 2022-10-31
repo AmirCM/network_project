@@ -3,8 +3,8 @@
 Authers: Amirhossein Behzadfar, Abhi, Patel, Kalvin McCallum
 
 
-Phase 2:
-Implementation of RDT 1.0 over a reliable UDP channel. 
+Phase 3:
+Implementation of RDT 2.2 over an unreliable UDP channel with bit-errors. 
 ---------------------------------------------------------------------
 Enviroment 
   -Windows
@@ -12,30 +12,18 @@ Enviroment
 
 
 Submitted Files:
-- Sender_Phase2.py - Parse BMP file into packets and send to the receiver
-- Receiver_Phase2.py - Receive packets and reconstruct the BMP file
-- GUI_client.py - GUI for the sender side
-- GUI_server.py - GUI for the receiver side
+- Sender_Phase3.py - Manages creating and sending packets of the bmp file with header information to the server
+- Receiver_Phase3.py - Receive packets, ensures data integrity, and sends acknowledgement back to sender. Reconstructs the image
 - select_me.bmp - BMP file used for transfer
 - design.md - Design document
-
-
 
 Sender/Receiver Instruction
 ----------------------------------------------------------------------
   * Save the provided BMP file to the appropriate directory. (in imgs sub directory)
-  * Run the Receiver_Phase2.py first, then run Sender_Phase2.py.
+  * Ensure that the NumPy module is installed when using PyCharm IDE (done by running "pip install numpy" in command line).
+  * For option 1 (no loss/bit-errors), ensure the variable "error_probability" in the sender file and variable "p" in receiver file are set to 0
+  * For option 2 (ACK packet bit-error), only the "error_probability" variable in the sender file should equal zero. 
+  * For option 3 (data packet bit-error), only the "p" variable in the receiver file should equal zero.
+  * Run the Receiver_Phase3.py first, then run Sender_Phase3.py.
   * Once the BMP file has been transferred between the client and server it will be saved in the project folder.
-  * Open the received image to ensure that no bits were lost during transfer.
-  * Note: BMP file should be 799 KB and should be named "select_me.bmp" and each packet created is of size 1024 Bytes
-
-GUI Instruction
-----------------------------------------------------------------------
-  * Before running the GUI ensure that the pip pillow module is installed when using PyCharm IDE.
-  * This can be done by using the "pip install pillow" command line.
-  * Begin by running GUI_server.py and wait for the GUI server window to open.
-  * Once the GUI server window opens, run GUI_client.py and wait for the GUI client window to open.
-  * On the GUI server window click on the "Start Server" button in the bottom left-hand corner.
-  * Then click on the "Select Image" button in the bottom left-hand corner of the GUI client window and select the BMP file "select me.bmp".
-  * Click on the "Send Image" button in the bottom left-hand corner of the GUI client window and wait for message to appear on GUI server window.
-  * Once the GUI server window displays "Incoming image received!!!", click on the "Show Image" button in the bottom left corner of the GUI server window.
+  * Note: BMP file should be 799 KB and should be named "select_me.bmp" and each packet contains 1024 bytes of data
