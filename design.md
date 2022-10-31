@@ -24,6 +24,11 @@ ___
 ![Alt text](imgs/Receiver_Main.png?raw=true "Optional Title")
 * This screenshot illustrates the main function that was created to implement the Receiver class methods and functions.
 
+# Checksum
+___
+
+* This screenshot illustrates the code that was created to implement the checksum.
+
 # Sender/Receiver Execution
 ___
 ![Alt text](imgs/Sender_Receiver_Execution.png?raw=true "Optional Title")
