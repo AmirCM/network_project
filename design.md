@@ -57,7 +57,7 @@ ___
 
 #  Plot Illustrating Completion Time For All Three Options  
 ___
-![Alt text](imgs/Run_Time.png?raw=true "Optional Title")
+![Alt text](imgs/CompletionTimeGraph.jpg?raw=true "Optional Title")
 * This image illustrates the completion time for all 3 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%. 
 
 
