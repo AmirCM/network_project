@@ -36,7 +36,7 @@ ___
 ![Alt text](imgs/Sender_Receiver_Execution.png?raw=true "Optional Title")
 * This image illustrates the transferred BMP file between a UDP client process and a UDP server process.
 
-#  Plot Illustrating Completion Time For All Three Options 
+#  Plot Illustrating Completion Time For All Three Options  
 ___
 
 * This image illustrates the completion time for all 3 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%. 
