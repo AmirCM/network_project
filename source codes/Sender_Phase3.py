@@ -1,8 +1,10 @@
+import socket
+import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
 
-
 error_probability = 0.01
+timeout = 50 / 1000
 
 def checksum(data):
     ch = data[0:2]
@@ -41,6 +43,13 @@ class Packet:
             i += 1  # increment loop variable
 
 
+def time_out(t):
+    if time.time() - t > timeout:
+        print('\t\t\t ############  TIME OUT'*2)
+        return True
+    return False
+
+
 class Sender:
     def __init__(self, port: int, destination, sockets: socket):
         self.rcvpkt = None
@@ -50,14 +59,17 @@ class Sender:
         self.packets = []  # packet array
 
     def rdt_rcv(self):
-        self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
+        try:
+            self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
+        except BlockingIOError as e:
+            pass
         if self.rcvpkt:
             return True
         return False
 
     def corrupt(self):
-        ch = checksum(self.rcvpkt[:-2])     # Compute ch on the incoming pkt
-        if ch == self.rcvpkt[-2:]:          # Compare ch to the incoming pkt ch
+        ch = checksum(self.rcvpkt[:-2])  # Compute ch on the incoming pkt
+        if ch == self.rcvpkt[-2:]:  # Compare ch to the incoming pkt ch
             return False
         print('Faulty checksum ', end='')
         return True
@@ -72,16 +84,16 @@ class Sender:
             if self.rcvpkt[0] == 1:
                 print(f'Ack for S{seq_num} ', end='')
                 return True
-        print(f'Nack for S{seq_num} ', end='')
+        # print(f'Nack for S{seq_num} ', end='')
         return False
 
+
 def data_pkt_error(pkt: bytes):
-    error = int(np.random.randint(0, 255,1)[0])
+    error = int(np.random.randint(0, 255, 1)[0])
     new_pkt = pkt[:error] + error.to_bytes(1, 'big') + pkt[error + 1:]
-    print("## -------ERROR---------  ##", f'Old ch= {checksum(pkt)} New ch= {checksum(new_pkt)}', "## -------ERROR--------- ##")
+    print("## -------ERROR---------  ##", f'Old ch= {checksum(pkt)} New ch= {checksum(new_pkt)}',
+          "## -------ERROR--------- ##")
     return new_pkt
-
-
 
 
 if __name__ == '__main__':
@@ -90,7 +102,9 @@ if __name__ == '__main__':
     p = Packet(image)
     p.make_packet()  # creates all packets to send to server with all headers
     s = None
+    T = 0
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
+        client_socket.setblocking(False)
         sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
 
         index = 0
@@ -100,15 +114,17 @@ if __name__ == '__main__':
         while True:
             if state == states[0]:
                 sender.rdt_send(packet)
+                T = time.time()
                 state = states[1]
                 print(f'Sent even packet')
 
             elif state == states[1]:
+                if time_out(T):
+                    sender.rdt_send(packet)
+                    T = time.time()
+                    print('Resend Packet')
                 if sender.rdt_rcv():
-                    if sender.corrupt() or not sender.isAck(0):
-                        print('Resend Packet')
-                        sender.rdt_send(packet)
-                    elif not sender.corrupt() and sender.isAck(0):
+                    if not sender.corrupt() and sender.isAck(0):
                         index += 1
                         if index >= packets_len:
                             break
@@ -118,14 +134,16 @@ if __name__ == '__main__':
 
             elif state == states[2]:
                 sender.rdt_send(packet)
+                T = time.time()
                 state = states[3]
                 print(f'Sent odd packet')
 
             elif state == states[3]:
+                if time_out(T):
+                    sender.rdt_send(packet)
+                    T = time.time()
                 if sender.rdt_rcv():
-                    if sender.corrupt() or not sender.isAck(1):
-                        sender.rdt_send(packet)
-                    elif not sender.corrupt() and sender.isAck(1):
+                    if not sender.corrupt() and sender.isAck(1):
                         index += 1
                         if index >= packets_len:
                             break

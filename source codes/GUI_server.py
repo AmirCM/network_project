@@ -8,7 +8,7 @@ from Receiver_Phase2 import Receiver
 
 class ClientGui:
     def __init__(self):
-        self.path = '../imgs/received_image.bmp'
+        self.path = '../imgs/select_me.bmp'
         self.root = Tk()
         self.root.geometry("400x400")  # size of the window
         self.root.title("Server GUI")  # changing the title of the window

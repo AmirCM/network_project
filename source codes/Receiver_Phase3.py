@@ -87,7 +87,7 @@ class Receiver:
         self.sockets.sendto(packet, self.dst_addr)
 
 
-p = 0.01
+p = 0.00
 
 if __name__ == '__main__':
     r = Receiver(12000)
@@ -148,4 +148,4 @@ if __name__ == '__main__':
             print(state, len(List))
             s = state
 
-    make_file('../imgs/received_image.bmp', List)
+    make_file('img.bmp', List)
