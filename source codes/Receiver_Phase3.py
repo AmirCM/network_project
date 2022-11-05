@@ -9,7 +9,8 @@ buffer = b''
 once_thru = 0
 pkt_len = 1029
 ACK = 1
-
+option2_error = 0.00
+option5_error = 0.00
 
 def checksum(data):
     ch = data[0:2]
@@ -25,7 +26,8 @@ def checksum(data):
 def make_file(path, data):
     with open(path, 'wb') as image:
         for i, p in enumerate(data):
-            skip = i * 1024  # skip variable holds number of bytes already stored
+            skip = i * 1024  # skip variable holds num
+            # ber of bytes already stored
             image.seek(skip)  # skip over bytes already stored as packets
             image.write(p)  # writing packets to file
 
@@ -53,7 +55,8 @@ class Receiver:
         self.sockets.close()
 
     def rdt_rcv(self) -> bool:
-        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
+        if not np.random.binomial(1, option5_error):
+            self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
         if self.recv_pkt:
             return True
         return False
@@ -86,9 +89,6 @@ class Receiver:
     def udt_send(self, packet):
         self.sockets.sendto(packet, self.dst_addr)
 
-
-p = 0.00
-
 if __name__ == '__main__':
     r = Receiver(12000)
     List = []
@@ -109,7 +109,7 @@ if __name__ == '__main__':
                     List.append(extract)
 
                     sndpkt = r.make_pkt(ACK, 0)
-                    if np.random.binomial(1, p):
+                    if np.random.binomial(1, option2_error):
                         noise_sndpkt = make_noise_pkt(ACK, 1)
                         r.udt_send(noise_sndpkt)
                         print('Noise', end='')
@@ -132,7 +132,7 @@ if __name__ == '__main__':
                     List.append(extract)
 
                     sndpkt = r.make_pkt(ACK, 1)
-                    if np.random.binomial(1, p):
+                    if np.random.binomial(1, option2_error):
                         noise_sndpkt = make_noise_pkt(ACK, 1)
                         r.udt_send(noise_sndpkt)
                         print('Noise', end='')

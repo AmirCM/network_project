@@ -3,7 +3,8 @@ import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
 
-error_probability = 0.01
+option3_error = 0.00
+option4_error = 0.00
 timeout = 50 / 1000
 
 def checksum(data):
@@ -60,7 +61,8 @@ class Sender:
 
     def rdt_rcv(self):
         try:
-            self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
+            if not np.random.binomial(1, option4_error):
+                self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
         except BlockingIOError as e:
             pass
         if self.rcvpkt:
@@ -75,7 +77,7 @@ class Sender:
         return True
 
     def rdt_send(self, data):
-        if np.random.binomial(1, error_probability):
+        if np.random.binomial(1, option3_error):
             data = data_pkt_error(data)
         self.sockets.sendto(data, (self.destination, self.port))
 
