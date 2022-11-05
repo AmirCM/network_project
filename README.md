@@ -20,7 +20,7 @@ Submitted Files:
 
 Sender/Receiver Instruction
 ----------------------------------------------------------------------
-  * Save the provided BMP file to the appropriate directory. (in imgs sub directory)
+  * Save all necessary provided files (two python files and BMP file) in the same directory
   * Ensure that the NumPy module is installed when using PyCharm IDE (done by running "pip install numpy" in command line).
   * For option 1 (no loss/bit-errors), ensure the variable "error_probability" in the sender file and variable "p" in receiver file are set to 0
   * For option 2 (ACK packet bit-error), only the "error_probability" variable in the sender file should equal zero. The other variable should be set to a decimal amount, representing a percentage.
