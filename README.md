@@ -26,10 +26,19 @@ Sender/Receiver Instruction
   * Navigate to the directory where the python scripts and bmp file are stored.
   * Run the Receiver_Phase3.py first in one window, then run Sender_Phase3.py in the other window.
   * The following command line should be used to run the reciver script: "python Receiver_Phase3.py -o 2 -p 0.01"
-  * The following command line should be used to run the reciver script: "python Sender_Phase3.py -o 3 -p 0.01"
+  * The following command line should be used to run the reciver script: "python Sender_Phase3.py -o 1 -p 0.0"
   * The value after -o can be changed to select the desired option (1 - 5) 
   * The value after -p can be changed to select the probablity rate
   * Option 2: The command is as follows the -p can be changed (0~1)
+    * python Receiver_Phase3.py -o 2 -p 0.01
+    * python Sender_Phase3.py -o 1 -p 0.0
+  * Option 3: The command is as follows the -p can be changed (0~1)
+    * python Receiver_Phase3.py -o 3 -p 0.01
+    * python Sender_Phase3.py -o 1 -p 0.0
+  * Option 4: The command is as follows the -p can be changed (0~1)
+    * python Receiver_Phase3.py -o 4 -p 0.01
+    * python Sender_Phase3.py -o 1 -p 0.0
+  * Option 5: The command is as follows the -p can be changed (0~1)
     * python Receiver_Phase3.py -o 2 -p 0.01
     * python Sender_Phase3.py -o 1 -p 0.0
   * Once the BMP file has been transferred between the client and server it will be saved in the directory folder.
