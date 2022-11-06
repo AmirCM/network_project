@@ -4,7 +4,7 @@ Authers: Amirhossein Behzadfar, Abhi, Patel, Kalvin McCallum
 
 
 Phase 4:
-Implementation of RDT 2.2 over an unreliable UDP channel with bit-errors. 
+Implementation of RDT 3.0 over an unreliable UDP channel with bit-errors. 
 ---------------------------------------------------------------------
 Enviroment 
   -Windows
