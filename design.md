@@ -1,6 +1,8 @@
 # Phase 4 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
 ___
-Implementation of RDT 3.0  over an unreliable UDP channel with bit-errors and loss. 
+# Introduction
+___
+Phase 4 of the network design project implements RDT 3.0 over an unreliable UDP channel with bit-errors and loss.  
 
 # Sender Code
 ___
