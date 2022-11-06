@@ -110,7 +110,7 @@ if __name__ == '__main__':
     elif args.o == 4:
         print(f'Option 4 P={args.p}')
         option4_error = args.p
-    elif args.o == 1:
+    elif args.o <= 5:
         option2_error = 0.00
         option5_error = 0.00
     else:
