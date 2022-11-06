@@ -1,7 +1,6 @@
-# Phase 3 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
+# Phase 4 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
 ___
-Implementation of RDT 2.2 over a reliable UDP channel. 
-Error handling for image file transfer including no loss/bit-errors, ACK packet bit-error, data packet bit-error.
+Implementation of RDT 3.0  over an unreliable UDP channel with bit-errors and loss. 
 
 # Sender Code
 ___
