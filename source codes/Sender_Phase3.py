@@ -105,10 +105,10 @@ if __name__ == '__main__':
     arg_parser.add_argument('-p', type=float, required=True)
     args = arg_parser.parse_args()
     if args.o == 3:
-        print(f'Option 2 P={args.p}')
+        print(f'Option 3 P={args.p}')
         option3_error = args.p
     elif args.o == 4:
-        print(f'Option 5 P={args.p}')
+        print(f'Option 4 P={args.p}')
         option4_error = args.p
     elif args.o == 1:
         option2_error = 0.00
