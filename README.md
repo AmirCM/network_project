@@ -29,5 +29,5 @@ Sender/Receiver Instruction
   * The following command line should be used to run the reciver script: "python .\Sender_Phase3.py -o 3 -p 0.01"
   * The value after -o can be changed to select the desired option (1 - 5) 
   * The value after -p can be changed to select the probablity rate
-  * Once the BMP file has been transferred between the client and server it will be saved in the project folder.
+  * Once the BMP file has been transferred between the client and server it will be saved in the directory folder.
   * Note: BMP file should be 799 KB and should be named "select_me.bmp" and each packet contains 1024 bytes of data
