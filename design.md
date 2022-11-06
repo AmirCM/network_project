@@ -2,7 +2,7 @@
 ___
 # Introduction
 ___
-Phase 4 of the network design project implements RDT 3.0 over an unreliable UDP channel with bit-errors and loss.  
+Phase 4 of the network design project implements RDT 3.0 over an unreliable UDP channel with bit-errors and loss. This phase leveraged the mechanisms of phase 3 to ensure that reliable data transfer service is still implemented over the unreliable bit-error prone UDP connection. However, the sender and receiver code has been adjusted to handle two additional senarios. Namely data packet loss and ACK packet loss. Furthermore, a user prompt was added to ensure that the user can easily choose the error probability.
 
 # Sender Code
 ___
@@ -70,12 +70,13 @@ ___
 * Commandline for finished receiver file execution
 
 
-#  Plot Illustrating Completion Time For All Three Options  
+#  Plot Illustrating Completion Time For All Five Options  
 ___
 ![Alt text](imgs/CompletionTimeGraph.jpg?raw=true "Optional Title")
 * This image illustrates the completion time for all 3 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%.
 * Option 1 does not have a curve since it is only run with no errors, for which it had a completion time of about 0.81 seconds
 * From the graph, the completion time increases as the error amount rises.
 * Option 3, involving data packet error, had the longer completion time as error amount increased compared to option 2, involving ACK packet error.
+* Option 4 & 5, to be added...
 
 
