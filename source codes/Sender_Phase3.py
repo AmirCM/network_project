@@ -110,6 +110,9 @@ if __name__ == '__main__':
     elif args.o == 4:
         print(f'Option 5 P={args.p}')
         option4_error = args.p
+    elif args.o == 1:
+        option2_error = 0.00
+        option5_error = 0.00
     else:
         print(f'Invalid input! {args.o} only option 3&4')
 
