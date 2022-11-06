@@ -2,6 +2,7 @@ import socket
 import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
+import argparse
 
 option3_error = 0.00
 option4_error = 0.00
@@ -99,6 +100,19 @@ def data_pkt_error(pkt: bytes):
 
 
 if __name__ == '__main__':
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('-o', type=int, required=True)
+    arg_parser.add_argument('-p', type=float, required=True)
+    args = arg_parser.parse_args()
+    if args.o == 3:
+        print(f'Option 2 P={args.p}')
+        option3_error = args.p
+    elif args.o == 4:
+        print(f'Option 5 P={args.p}')
+        option4_error = args.p
+    else:
+        print(f'Invalid input! {args.o} only option 3&4')
+
     states = ['w4zero', 'w4Ack0', 'w4one', 'w4Ack1']
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
     p = Packet(image)

@@ -2,6 +2,7 @@ import socket
 import sys
 from socket import *  # imports socket module to enable network communication
 import numpy as np
+import argparse
 
 states = ['w4zero', 'w4one']
 state = states[0]
@@ -11,6 +12,7 @@ pkt_len = 1029
 ACK = 1
 option2_error = 0.00
 option5_error = 0.00
+
 
 def checksum(data):
     ch = data[0:2]
@@ -89,7 +91,21 @@ class Receiver:
     def udt_send(self, packet):
         self.sockets.sendto(packet, self.dst_addr)
 
+
 if __name__ == '__main__':
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('-o', type=int, required=True)
+    arg_parser.add_argument('-p', type=float, required=True)
+    args = arg_parser.parse_args()
+    if args.o == 2:
+        print(f'Option 2 P={args.p}')
+        option2_error = args.p
+    elif args.o == 5:
+        print(f'Option 5 P={args.p}')
+        option5_error = args.p
+    else:
+        print(f'Invalid input! {args.o} only option 2&5')
+
     r = Receiver(12000)
     List = []
     extract = None
