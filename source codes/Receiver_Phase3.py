@@ -57,8 +57,9 @@ class Receiver:
         self.sockets.close()
 
     def rdt_rcv(self) -> bool:
-        if not np.random.binomial(1, option5_error):
-            self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
+        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
+        if np.random.binomial(1, option5_error):
+            self.recv_pkt = None
         if self.recv_pkt:
             return True
         return False
