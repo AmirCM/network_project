@@ -2,7 +2,7 @@
 ___
 # Introduction
 ___
-Phase 4 of the network design project implements RDT 3.0 over an unreliable UDP channel with bit-errors and loss. This phase leveraged the mechanisms of phase 3 to ensure that reliable data transfer service is still implemented over the unreliable bit-error prone UDP connection. However, the sender and receiver code has been adjusted to handle two additional scenarios, namely data packet loss and ACK packet loss. The recovery mechanism has also been simplified, as we have implemented a timer. If the correct ACK is not received at the sender by the timer's duration, the sender will resend the data packet to the receiver. Furthermore, a user prompt was added to ensure that the user can easily choose the error probability.
+Phase 4 of the network design project implements RDT 3.0 over an unreliable UDP channel with bit-errors and loss. This phase leveraged the mechanisms of phase 3 to ensure that reliable data transfer service is still implemented over the unreliable bit-error prone UDP connection. However, the sender and receiver code has been adjusted to handle two additional scenarios, namely data packet loss and ACK packet loss. The recovery mechanism has also been simplified, as we have implemented a timer. If the correct ACK is not received at the sender by the timer's duration, the sender will resend the data packet to the receiver. Furthermore, a user prompt was added to ensure that the user can easily choose the option and error probability.
 
 # Sender Code
 ___
