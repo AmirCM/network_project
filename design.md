@@ -72,7 +72,7 @@ ___
 
 #  Plot Illustrating Completion Time For All Five Options  
 ___
-![Alt text](imgs/CompletionTimeGraphPhase4.jpg?raw=true "Optional Title")
+![Alt text](imgs/CompletionTimeGraphPhase4.png?raw=true "Optional Title")
 * This image illustrates the completion time for all 5 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%.
 * Option 1 does not have a curve since it is only run with no errors, for which it had a completion time of about 0.788 seconds
 * From the graph, the completion time increases as the error amount rises.
