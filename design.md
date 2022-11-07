@@ -65,6 +65,8 @@ ___
 * This image illustrates the transferred BMP file between a UDP client process and a UDP server process.
 
 # Commandline for Execution Start and End for Sender/Receiver
+
+# Option 1
 ![Alt text](imgs/P4_ExecutionStart_Sender.jpg?raw=true "Optional Title")
 * Commandline for starting sender file execution
 
@@ -75,6 +77,58 @@ ___
 * Commandline for starting receiver file execution
 
 ![Alt text](imgs/P4_ExecutionEnd_Receiver.jpg?raw=true "Optional Title")
+* Commandline for finished receiver file execution
+
+# Option 2
+![Alt text](imgs/P4_O2_SenderStart.jpg?raw=true "Optional Title")
+* Commandline for starting sender file execution (Note: Faulty Checksum print statement was commented out to make grabbing execution screenshots for option 2 through 5 simpler)
+
+![Alt text](imgs/P4_O2_SenderEnd.jpg?raw=true "Optional Title")
+* Commandline for finished sender file execution
+
+![Alt text](imgs/P4_O2_ReceiverStart.jpg?raw=true "Optional Title")
+* Commandline for starting receiver file execution
+
+![Alt text](imgs/P4_O2_ReceiverEnd.jpg?raw=true "Optional Title")
+* Commandline for finished receiver file execution
+
+# Option 3
+![Alt text](imgs/P4_O3_SenderStart.jpg?raw=true "Optional Title")
+* Commandline for starting sender file execution
+
+![Alt text](imgs/P4_O3_SenderEnd.jpg?raw=true "Optional Title")
+* Commandline for finished sender file execution
+
+![Alt text](imgs/P4_O3_ReceiverStart.jpg?raw=true "Optional Title")
+* Commandline for starting receiver file execution
+
+![Alt text](imgs/P4_O3_ReceiverEnd.jpg?raw=true "Optional Title")
+* Commandline for finished receiver file execution
+
+# Option 4
+![Alt text](imgs/P4_O4_SenderStart.jpg?raw=true "Optional Title")
+* Commandline for starting sender file execution
+
+![Alt text](imgs/P4_O4_SenderEnd.jpg?raw=true "Optional Title")
+* Commandline for finished sender file execution
+
+![Alt text](imgs/P4_O4_ReceiverStart.jpg?raw=true "Optional Title")
+* Commandline for starting receiver file execution
+
+![Alt text](imgs/P4_O4_ReceiverEnd.jpg?raw=true "Optional Title")
+* Commandline for finished receiver file execution
+
+# Option 5
+![Alt text](imgs/P4_O5_SenderStart.jpg?raw=true "Optional Title")
+* Commandline for starting sender file execution
+
+![Alt text](imgs/P4_O5_SenderEnd.jpg?raw=true "Optional Title")
+* Commandline for finished sender file execution
+
+![Alt text](imgs/P4_O5_ReceiverStart.jpg?raw=true "Optional Title")
+* Commandline for starting receiver file execution
+
+![Alt text](imgs/P4_O5_ReceiverEnd.jpg?raw=true "Optional Title")
 * Commandline for finished receiver file execution
 
 
