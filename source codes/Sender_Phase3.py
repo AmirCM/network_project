@@ -62,8 +62,9 @@ class Sender:
 
     def rdt_rcv(self):
         try:
-            if not np.random.binomial(1, option4_error):
-                self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
+            self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
+            if np.random.binomial(1, option4_error):
+                self.rcvpkt = None
         except BlockingIOError as e:
             pass
         if self.rcvpkt:
