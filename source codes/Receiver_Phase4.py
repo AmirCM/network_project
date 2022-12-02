@@ -4,14 +4,13 @@ from socket import *  # imports socket module to enable network communication
 import numpy as np
 import argparse
 
-states = ['w4zero', 'w4one']
-state = states[0]
 buffer = b''
 once_thru = 0
 pkt_len = 1029
 ACK = 1
 option2_error = 0.00
 option5_error = 0.00
+expected_seq_num = 1
 
 
 def checksum(data):
@@ -116,56 +115,33 @@ if __name__ == '__main__':
     sndpkt = None
     once_thru = 0
     s = None
+
     while True:
-        if state == states[0]:
-            if r.rdt_rcv():
-                if r.corrupt() or r.has_seqnum(1):
-                    if once_thru == 1:
-                        r.udt_send(sndpkt)
-                        print('Corrupt Resend', end='')
-                elif not r.corrupt() and r.has_seqnum(0):
-                    extract = r.extract()
-                    print(f'Received L= {len(extract)} ', end='')
-                    List.append(extract)
+        if r.rdt_rcv():
+            if not r.corrupt() and r.has_seqnum(expected_seq_num):
+                extract = r.extract()
+                print(f'Received L= {len(extract)} ', end='')
+                List.append(extract)
 
-                    sndpkt = r.make_pkt(ACK, 0)
-                    if np.random.binomial(1, option2_error):
-                        noise_sndpkt = make_noise_pkt(ACK, 1)
-                        r.udt_send(noise_sndpkt)
-                        print('Noise', end='')
-                    else:
-                        r.udt_send(sndpkt)
-
-                    once_thru = 1
-                    state = states[1]  # Next State
-                    print(f'Sent ACK {len(sndpkt)} S0')
-                    if len(extract) < 1024:
-                        break
-        elif state == states[1]:
-            if r.rdt_rcv():
-                if r.corrupt() or r.has_seqnum(0):
-                    print('Corrupt', end='')
+                sndpkt = r.make_pkt(ACK, expected_seq_num)
+                if np.random.binomial(1, option2_error):
+                    noise_sndpkt = make_noise_pkt(ACK, 1)
+                    r.udt_send(noise_sndpkt)
+                    print('Noise', end='')
+                else:
                     r.udt_send(sndpkt)
-                elif not r.corrupt() and r.has_seqnum(1):
-                    extract = r.extract()
-                    print(f'Received L= {len(extract)} ', end='')
-                    List.append(extract)
+                    expected_seq_num += 1
 
-                    sndpkt = r.make_pkt(ACK, 1)
-                    if np.random.binomial(1, option2_error):
-                        noise_sndpkt = make_noise_pkt(ACK, 1)
-                        r.udt_send(noise_sndpkt)
-                        print('Noise', end='')
-                    else:
-                        r.udt_send(sndpkt)
+                once_thru = 1
 
-                    state = states[0]  # Next State
-                    print(f'Sent ACK {len(sndpkt)} S1')
-                    if len(extract) < 1024:
-                        break
+                print(f'Sent ACK {len(sndpkt)} S0')
+                if len(extract) < 1024:
+                    break
+        else:
+            r.udt_send(sndpkt)
+            print(f'Sent ACK {len(sndpkt)} S1')
 
-        if s != state:
-            print(state, len(List))
-            s = state
+            if len(extract) < 1024:
+                break
 
     make_file('img.bmp', List)
