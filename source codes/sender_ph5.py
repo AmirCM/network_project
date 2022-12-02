@@ -31,9 +31,9 @@ class Packet:
             skip = i * 1024  # skip variable holds number of bytes already stored
             self.data.seek(skip)  # skip over bytes already stored as packets
             chunk = self.data.read(1024)  # store 1024 bytes of file as a packet
-            seqnum = i % 2
+            seqnum = i
             data_len = len(chunk)
-            chunk = chunk + data_len.to_bytes(2, 'big') + seqnum.to_bytes(1, 'big')
+            chunk = chunk + data_len.to_bytes(2, 'big') + seqnum.to_bytes(2, 'big')
 
             ch = checksum(chunk)
 
@@ -43,6 +43,10 @@ class Packet:
                 image.close()  # close bmp file
                 break
             i += 1  # increment loop variable
+
+    def packet_at(self, i):
+        return self.packets[i]
+
 
 
 def time_out(t):
@@ -62,7 +66,7 @@ class Sender:
 
     def rdt_rcv(self):
         try:
-            self.rcvpkt = self.sockets.recv(6)  # 1 Data, 2 len, 1 seq, 2 ch thus 6 Bytes
+            self.rcvpkt = self.sockets.recv(7)  # 1 Data, 2 len, 2 seq, 2  ch thus 7 Bytes
             if np.random.binomial(1, option4_error):
                 self.rcvpkt = None
         except BlockingIOError as e:
@@ -83,13 +87,8 @@ class Sender:
             data = data_pkt_error(data)
         self.sockets.sendto(data, (self.destination, self.port))
 
-    def isAck(self, seq_num: int):
-        if self.rcvpkt[-3] == seq_num:
-            if self.rcvpkt[0] == 1:
-                print(f'Ack for S{seq_num} ', end='')
-                return True
-        # print(f'Nack for S{seq_num} ', end='')
-        return False
+    def getAck(self):
+        return int.from_bytes(self.rcvpkt[-4:-2], 'big')
 
 
 def data_pkt_error(pkt: bytes):
@@ -102,31 +101,38 @@ def data_pkt_error(pkt: bytes):
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('-o', type=int, required=True)
-    arg_parser.add_argument('-p', type=float, required=True)
+    arg_parser.add_argument('-N', type=int, required=True)
     args = arg_parser.parse_args()
-    if args.o == 3:
-        print(f'Option 3 P={args.p}')
-        option3_error = args.p
-    elif args.o == 4:
-        print(f'Option 4 P={args.p}')
-        option4_error = args.p
-    elif args.o <= 5:
-        option2_error = 0.00
-        option5_error = 0.00
-    else:
-        print(f'Invalid input! {args.o} only option 3&4')
-
+    N = args.N
+    print(f'**** GB{N} ****')
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
     p = Packet(image)
     p.make_packet()  # creates all packets to send to server with all headers
-
+    print(len(p.packets))
     T = 0
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
         client_socket.setblocking(False)
         sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
         done = False
-        base = 1
-        nextseqnum = 1
+        base = 0
+        nextseqnum = 0
         while not done:
+            if nextseqnum < base + N:
+                sender.rdt_send(p.packets[nextseqnum])
+                if base == nextseqnum:
+                    T = time.time()
+                nextseqnum += 1
+                if nextseqnum > 798:
+                    done = True
+
+            if timeout(T):
+                T = time.time()
+                for i in range(base, nextseqnum):
+                    sender.rdt_send((p.packets[i]))
+
+            if sender.rdt_rcv():
+                if not sender.corrupt():
+                    base = sender.getAck() + 1
+                    if base != nextseqnum:
+                        T = time.time()
 
