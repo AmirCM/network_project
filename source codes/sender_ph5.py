@@ -66,7 +66,7 @@ class Sender:
 
     def rdt_rcv(self):
         try:
-            self.rcvpkt = self.sockets.recv(7)  # 1 Data, 2 len, 2 seq, 2  ch thus 7 Bytes
+            self.rcvpkt = self.sockets.recv(4)  # 2 seq, 2  ch thus 7 Bytes
             if np.random.binomial(1, option4_error):
                 self.rcvpkt = None
         except BlockingIOError as e:
@@ -117,6 +117,7 @@ if __name__ == '__main__':
         base = 0
         nextseqnum = 0
         while not done:
+            print(f'\rseq: {nextseqnum}, Base: {base}', end='')
             if nextseqnum < base + N:
                 sender.rdt_send(p.packets[nextseqnum])
                 if base == nextseqnum:

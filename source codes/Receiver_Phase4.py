@@ -6,11 +6,11 @@ import argparse
 
 buffer = b''
 once_thru = 0
-pkt_len = 1029
+pkt_len = 1030
 ACK = 1
 option2_error = 0.00
 option5_error = 0.00
-expected_seq_num = 1
+expected_seq_num = 0
 
 
 def checksum(data):
@@ -71,29 +71,24 @@ class Receiver:
         return True
 
     def has_seqnum(self, seq_num: int) -> bool:
-        if self.recv_pkt[-3] == seq_num:
-            # print(f'Seq: {seq_num}')
+        if int.from_bytes(self.recv_pkt[-4:-2], 'big') == seq_num:
             return True
         return False
 
     def extract(self):
-        pkt_len = int.from_bytes(self.recv_pkt[-5:-3], 'big')
+        pkt_len = int.from_bytes(self.recv_pkt[-6:-4], 'big')
         return self.recv_pkt[:pkt_len]
 
-    def make_pkt(self, ack: int, seq_num: int):
-        pkt_len = 1
-        pkt_len = pkt_len.to_bytes(2, 'big')
-        ack = ack.to_bytes(2, 'big')
+    def make_pkt(self, seq_num: int):
         seq_num = seq_num.to_bytes(2, 'big')
-        data = ack + pkt_len + seq_num
-        return data + checksum(data)
+        return seq_num + checksum(seq_num)
 
     def udt_send(self, packet):
         self.sockets.sendto(packet, self.dst_addr)
 
 
 if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser()
+    """arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('-o', type=int, required=True)
     arg_parser.add_argument('-p', type=float, required=True)
     args = arg_parser.parse_args()
@@ -107,7 +102,7 @@ if __name__ == '__main__':
             option2_error = 0.00
             option5_error = 0.00
     else:
-        print(f'Invalid input! {args.o} only option 2&5')
+        print(f'Invalid input! {args.o} only option 2&5')"""
 
     r = Receiver(12000)
     List = []
@@ -123,15 +118,9 @@ if __name__ == '__main__':
                 print(f'Received L= {len(extract)} ', end='')
                 List.append(extract)
 
-                sndpkt = r.make_pkt(ACK, expected_seq_num)
-                if np.random.binomial(1, option2_error):
-                    noise_sndpkt = make_noise_pkt(ACK, 1)
-                    r.udt_send(noise_sndpkt)
-                    print('Noise', end='')
-                else:
-                    r.udt_send(sndpkt)
-                    expected_seq_num += 1
-
+                sndpkt = r.make_pkt(expected_seq_num)
+                r.udt_send(sndpkt)
+                expected_seq_num += 1
                 once_thru = 1
 
                 print(f'Sent ACK {len(sndpkt)} S0')
