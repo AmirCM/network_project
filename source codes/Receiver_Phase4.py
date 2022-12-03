@@ -89,7 +89,7 @@ class Receiver:
 
 
 if __name__ == '__main__':
-    """arg_parser = argparse.ArgumentParser()
+    arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('-o', type=int, required=True)
     arg_parser.add_argument('-p', type=float, required=True)
     args = arg_parser.parse_args()
@@ -100,10 +100,10 @@ if __name__ == '__main__':
         print(f'Option 5 P={args.p}')
         option5_error = args.p
     elif args.o <= 5:
-            option2_error = 0.00
-            option5_error = 0.00
+        option2_error = 0.00
+        option5_error = 0.00
     else:
-        print(f'Invalid input! {args.o} only option 2&5')"""
+        print(f'Invalid input! {args.o} only option 2&5')
 
     r = Receiver(12000)
     app_layer_data = []
@@ -116,8 +116,12 @@ if __name__ == '__main__':
             if not r.corrupt() and r.has_seqnum(expected_seq_num):
                 extract = r.extract()
                 app_layer_data.append(extract)
-                sndpkt = r.make_pkt(expected_seq_num)
-                r.udt_send(sndpkt)
+                if np.random.binomial(1, option2_error):
+                    noise_sndpkt = make_noise_pkt(ACK, expected_seq_num)
+                    r.udt_send(noise_sndpkt)
+                else:
+                    sndpkt = r.make_pkt(expected_seq_num)
+                    r.udt_send(sndpkt)
                 print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}', end='')
                 expected_seq_num += 1
                 if len(extract) < 1024:
