@@ -11,7 +11,7 @@ ___
 * This class utilizes the make function to construct a package which consists of data, a sequence number, data length, and a checksum.
 * Once a packet is less than 1024 bytes, the end of the file has been reached and the bmp file is closed.
 
-![Alt text](imgs/Sender_Class.jpg?raw=true "Optional Title")
+![Alt text](imgs/Sender_Class.png?raw=true "Optional Title")
 * This snapshot shows the sender class created, with methods to parse packets to the receiver.
 * The sender class employs several functions to implement the desired methodologies.
 * The rdt receive function is utilized to receive packets from the receiver after a packet has been sent by the sender. An additional conditional is added to this function to remove/ignore the received ACK packet given a loss probability.
@@ -20,10 +20,10 @@ ___
 * The isAck function is used to check acknowledgements received from the receiver.
 * The data_pkt_error function is used to generate data errors in the package sent to the receiver.
 
-![Alt text](imgs/Timeout_Func.jpg?raw=true "Optional Title")
+![Alt text](imgs/Timeout_Func.png?raw=true "Optional Title")
 * The timeout function serves as the new recovery mechanism if there are bit-errors or lost packets. The timeout is set to 50 ms.
 
-![Alt text](imgs/Sender_Main.jpg?raw=true "Optional Title")
+![Alt text](imgs/Sender_Main.png?raw=true "Optional Title")
 * These screenshots illustrate the main function code written to implement the class methods and functions.
 * The main function begins by accepting arguments for the option number and error/loss amount.
 * The main function then opens the image and begins creating packets by calling the make packet function.
