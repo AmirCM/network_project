@@ -1,8 +1,8 @@
-# Phase 4 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
+# Phase 5 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
 ___
 # Introduction
 ___
-Phase 4 of the network design project implements RDT 3.0 over an unreliable UDP channel with bit-errors and loss. This phase leveraged the mechanisms of phase 3 to ensure that reliable data transfer service is still implemented over the unreliable bit-error prone UDP connection. However, the sender and receiver code has been adjusted to handle two additional scenarios, namely data packet loss and ACK packet loss. The recovery mechanism has also been simplified, as we have implemented a timer. If the correct ACK is not received at the sender by the timer's duration, the sender will resend the data packet to the receiver. Furthermore, a user prompt was added to ensure that the user can easily choose the option and error probability.
+Phase 5 of the network design project implements Go-Back-N protocol over an unreliable UDP channel with bit-errors and loss. Similar to phase 4, phase 5 implementsfive data transfer senarios, namely no loss/bit-errors, ack packet bit-errors, data packet bit-error, ack packet loss, and data packet loss. However, data transfer is implemented using a pipelined method. Two primary approaches used to implemented the pipelined protocol include Go-Back-N and selective repeat. In Go-Back-N, the sender transmits multiple packets without waiting for an acknowledgement, but is constrained by a maximum number of unacknowledges packets allowed in the pipeline. The selective repeat protocol ensures thatthe sender only retransmits the packets that it suspects were received in error by the receiver. Thus, the receiver acknowledges only the individual packets that are received irrespective of the order. 
 
 # Sender Code
 ___
