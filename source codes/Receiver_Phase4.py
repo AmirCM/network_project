@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
 import argparse
@@ -105,32 +106,24 @@ if __name__ == '__main__':
         print(f'Invalid input! {args.o} only option 2&5')"""
 
     r = Receiver(12000)
-    List = []
+    app_layer_data = []
     extract = None
     sndpkt = None
     once_thru = 0
-    s = None
 
     while True:
         if r.rdt_rcv():
             if not r.corrupt() and r.has_seqnum(expected_seq_num):
                 extract = r.extract()
-                print(f'Received L= {len(extract)} ', end='')
-                List.append(extract)
-
+                app_layer_data.append(extract)
                 sndpkt = r.make_pkt(expected_seq_num)
                 r.udt_send(sndpkt)
+                print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}', end='')
                 expected_seq_num += 1
-                once_thru = 1
-
-                print(f'Sent ACK {len(sndpkt)} S0')
                 if len(extract) < 1024:
                     break
         else:
             r.udt_send(sndpkt)
             print(f'Sent ACK {len(sndpkt)} S1')
 
-            if len(extract) < 1024:
-                break
-
-    make_file('img.bmp', List)
+    make_file('img.bmp', app_layer_data)

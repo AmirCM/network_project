@@ -110,6 +110,7 @@ if __name__ == '__main__':
     p.make_packet()  # creates all packets to send to server with all headers
     print(len(p.packets))
     T = 0
+    st_clock = time.time()
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
         client_socket.setblocking(False)
         sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
@@ -136,4 +137,4 @@ if __name__ == '__main__':
                     base = sender.getAck() + 1
                     if base != nextseqnum:
                         T = time.time()
-
+    print(f"Elapsed time: {time.time() - st_clock}")
