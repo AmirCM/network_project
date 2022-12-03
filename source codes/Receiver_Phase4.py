@@ -62,7 +62,7 @@ class Receiver:
         ch = checksum(self.recv_pkt[: -2])  # Compute ch on the incoming pkt
         if ch == self.recv_pkt[-2:]:  # Compare ch to the incoming pkt ch
             return False
-        print('Faulty checksum ', end='')
+        # print('Faulty checksum ', end='')
         return True
 
     def has_seqnum(self, seq_num: int) -> bool:
@@ -113,12 +113,10 @@ if __name__ == '__main__':
                 app_layer_data.append(extract)
                 sndpkt = r.make_pkt(expected_seq_num)
                 r.udt_send(sndpkt)
-                print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}', end='')
+                # print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}')
                 expected_seq_num += 1
                 if len(extract) < 1024:
                     break
-            else:
-                r.udt_send(sndpkt)
-                print(f'Dual Ack {expected_seq_num}')
+
 
     make_file('img.bmp', app_layer_data)

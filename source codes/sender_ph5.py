@@ -51,7 +51,7 @@ class Packet:
 
 def time_out(t):
     if time.time() - t > timeout:
-        print('\t #######  TIME OUT #######' )
+        # print('\t #######  TIME OUT #######' )
         return True
     return False
 
@@ -70,7 +70,8 @@ class Sender:
             if np.random.binomial(1, option4_error):
                 self.rcvpkt = None
         except BlockingIOError as e:
-            pass
+            return False
+
         if self.rcvpkt:
             return True
         return False
@@ -79,7 +80,6 @@ class Sender:
         ch = checksum(self.rcvpkt[:-2])  # Compute ch on the incoming pkt
         if ch == self.rcvpkt[-2:]:  # Compare ch to the incoming pkt ch
             return False
-        print('Faulty checksum ', end='')
         return True
 
     def rdt_send(self, data):
@@ -140,7 +140,6 @@ if __name__ == '__main__':
                     done = True
 
             if time_out(T):
-                print('\nRetransmit')
                 T = time.time()        # Reset Timer
                 for i in range(base, nextseqnum):
                     sender.rdt_send((p.packets[i]))
@@ -148,7 +147,7 @@ if __name__ == '__main__':
             if sender.rdt_rcv():
                 if not sender.corrupt():
                     base = sender.getAck() + 1
-                    """if base != nextseqnum:
-                        T = time.time()   # Reset Timer"""
+                    if base != nextseqnum:
+                        T = time.time()   # Reset Timer
 
     print(f"\nElapsed time: {time.time() - st_clock}")
