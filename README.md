@@ -26,19 +26,19 @@ Sender/Receiver Instruction
   * Navigate to the directory where the python scripts and bmp file are stored.
   * Run the Receiver_Phase5.py first in one window, then run Sender_Phase5.py in the other window.
   * Option 1: The command is as follows the -p can be changed (0~1)
-    * python Receiver_Phase5.py -o 1 -p 0.0
+    * python Receiver_Phase5.py -o 1 -p 0.0 -N 10
     * python Sender_Phase5.py -o 1 -p 0.0
   * Option 2: The command is as follows the -p can be changed (0~1)
-    * python Receiver_Phase5.py -o 2 -p 0.01
+    * python Receiver_Phase5.py -o 2 -p 0.01 -N 10
     * python Sender_Phase5.py -o 2 -p 0.0
   * Option 3: The command is as follows the -p can be changed (0~1)
-    * python Receiver_Phase5.py -o 3 -p 0.0
+    * python Receiver_Phase5.py -o 3 -p 0.0 -N 10
     * python Sender_Phase5.py -o 3 -p 0.01
   * Option 4: The command is as follows the -p can be changed (0~1)
-    * python Receiver_Phase5.py -o 4 -p 0.0
+    * python Receiver_Phase5.py -o 4 -p 0.0 -N 10
     * python Sender_Phase5.py -o 4 -p 0.01
   * Option 5: The command is as follows the -p can be changed (0~1)
-    * python Receiver_Phase5.py -o 5 -p 0.01
+    * python Receiver_Phase5.py -o 5 -p 0.01 -N 10
     * python Sender_Phase5.py -o 5 -p 0.0
   * Once the BMP file has been transferred between the client and server it will be saved in the directory folder.
   * Note: BMP file should be 799 KB and should be named "select_me.bmp" and each packet contains 1024 bytes of data
