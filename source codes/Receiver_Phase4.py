@@ -37,11 +37,11 @@ def make_noise_pkt(ack: int, seq_num: int):
     pkt_len = 1
     pkt_len = pkt_len.to_bytes(2, 'big')
     ack = ack.to_bytes(1, 'big')
-    seq_num = seq_num.to_bytes(1, 'big')
+    seq_num = seq_num.to_bytes(2, 'big')
     data = ack + pkt_len + seq_num
     ch = checksum(data)
     ack = 0
-    ack = ack.to_bytes(1, 'big')
+    ack = ack.to_bytes(2, 'big')
     return ack + pkt_len + seq_num + ch
 
 
@@ -83,8 +83,8 @@ class Receiver:
     def make_pkt(self, ack: int, seq_num: int):
         pkt_len = 1
         pkt_len = pkt_len.to_bytes(2, 'big')
-        ack = ack.to_bytes(1, 'big')
-        seq_num = seq_num.to_bytes(1, 'big')
+        ack = ack.to_bytes(2, 'big')
+        seq_num = seq_num.to_bytes(2, 'big')
         data = ack + pkt_len + seq_num
         return data + checksum(data)
 

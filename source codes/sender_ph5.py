@@ -125,7 +125,7 @@ if __name__ == '__main__':
                 if nextseqnum > 798:
                     done = True
 
-            if timeout(T):
+            if time_out(T):
                 T = time.time()
                 for i in range(base, nextseqnum):
                     sender.rdt_send((p.packets[i]))
