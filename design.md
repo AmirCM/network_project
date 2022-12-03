@@ -32,7 +32,7 @@ ___
 
 # Receiver Code
 ___
-![Alt text](imgs/P4_Receiver_Class_2.jpg?raw=true "Optional Title")
+![Alt text](imgs/Receiver_Class.png?raw=true "Optional Title")
 * This screenshot illustrates the receiver class and functions that were created to receive packets from and send packets to the sender.
 * The receiver class employs several functions to implement the desired methodologies.
 * The rdt receive function is utilized to receive packets from the sender, and a conditional is added in phase 4 to ignore packets based on the input error/loss probability.
@@ -42,9 +42,7 @@ ___
 * The make_packet function is used to contruct the packet that is sent to the sender once a package has been received from the sender.
 * The udt send function is used to send packets to the sender after a packet has been received from the sender.
 
-![Alt text](imgs/Sender_Main_ArgParser.jpg?raw=true "Optional Title")
-![Alt text](imgs/P4_Receiver_Main.jpg?raw=true "Optional Title")
-![Alt text](imgs/P4_Receiver_Main_2.jpg?raw=true "Optional Title")
+![Alt text](imgs/Receiver_Main.png?raw=true "Optional Title")
 * These screenshots illustrates the main function code written to implement the Receiver class methods and functions.
 * First, the main function accepts arguments for the option number and error/loss amount.
 * The main function utilizes conditional statements to move through the two states of the receiver finite state machine.
