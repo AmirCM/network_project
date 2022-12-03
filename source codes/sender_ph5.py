@@ -116,6 +116,7 @@ if __name__ == '__main__':
         option5_error = 0.00
     else:
         print(f'Invalid input! {args.o} only option 3&4')
+
     N = args.N
     print(f'**** GB{N} ****')
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
@@ -150,4 +151,4 @@ if __name__ == '__main__':
                     base = sender.getAck() + 1
                     if base != nextseqnum:
                         T = time.time()
-    print(f"Elapsed time: {time.time() - st_clock}")
+    print(f"\nElapsed time: {time.time() - st_clock}")

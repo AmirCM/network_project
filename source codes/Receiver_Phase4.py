@@ -34,10 +34,12 @@ def make_file(path, data):
             image.write(p)  # writing packets to file
 
 
-def make_noise_pkt(seq_num: int):
-    seq_num += 1
-    seq_num = seq_num.to_bytes(2, 'big')
-    return seq_num + checksum(seq_num)
+def data_pkt_error(pkt: bytes):
+    error = int(np.random.randint(0, 65535, 1)[0])      # Get a random number between 0 ~ 0xFFFF
+    new_pkt = error.to_bytes(2, 'big') + pkt[-2:]       # Replace the seqnum by the random number
+    print("## -------ERROR---------  ##", f'Old ch= {checksum(pkt)} New ch= {checksum(new_pkt)}',
+          "## -------ERROR--------- ##")
+    return new_pkt
 
 
 class Receiver:
@@ -78,7 +80,9 @@ class Receiver:
         seq_num = seq_num.to_bytes(2, 'big')
         return seq_num + checksum(seq_num)
 
-    def udt_send(self, packet):
+    def udt_send(self, packet: bytes):
+        if np.random.binomial(1, option2_error):
+            packet = data_pkt_error(packet)
         self.sockets.sendto(packet, self.dst_addr)
 
 
@@ -110,19 +114,14 @@ if __name__ == '__main__':
             if not r.corrupt() and r.has_seqnum(expected_seq_num):
                 extract = r.extract()
                 app_layer_data.append(extract)
-                if np.random.binomial(1, option2_error):
-                    noise_sndpkt = make_noise_pkt(expected_seq_num)
-                    r.udt_send(noise_sndpkt)
-                    print('Noise packet sent\n')
-                else:
-                    sndpkt = r.make_pkt(expected_seq_num)
-                    r.udt_send(sndpkt)
+                sndpkt = r.make_pkt(expected_seq_num)
+                r.udt_send(sndpkt)
                 print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}', end='')
                 expected_seq_num += 1
                 if len(extract) < 1024:
                     break
         else:
             r.udt_send(sndpkt)
-            print(f'Sent ACK {len(sndpkt)} S1')
+            print(f'Dual Ack')
 
     make_file('img.bmp', app_layer_data)
