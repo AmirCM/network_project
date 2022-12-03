@@ -113,10 +113,12 @@ if __name__ == '__main__':
                 app_layer_data.append(extract)
                 sndpkt = r.make_pkt(expected_seq_num)
                 r.udt_send(sndpkt)
-                # print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}')
+                # print(f'\rReceived L= {len(extract)} Ack: {expected_seq_num}', end='')
                 expected_seq_num += 1
                 if len(extract) < 1024:
                     break
-
+            else:
+                r.udt_send(sndpkt)
+                # print(f'Dual Ack {expected_seq_num}')
 
     make_file('img.bmp', app_layer_data)

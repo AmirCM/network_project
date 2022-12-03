@@ -130,7 +130,7 @@ if __name__ == '__main__':
         base = 0
         nextseqnum = 0
         while not done:
-            print(f'\rseq: {nextseqnum}, Base: {base}, T: {(time.time() - T)*1000//1}', end='')
+            print(f'\rseq: {nextseqnum}, Base: {base}, \t T: {(time.time() - T)*1000//1}', end='')
             if nextseqnum < base + N:
                 sender.rdt_send(p.packets[nextseqnum])
                 if base == nextseqnum:
