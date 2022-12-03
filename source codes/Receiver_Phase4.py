@@ -34,16 +34,10 @@ def make_file(path, data):
             image.write(p)  # writing packets to file
 
 
-def make_noise_pkt(ack: int, seq_num: int):
-    pkt_len = 1
-    pkt_len = pkt_len.to_bytes(2, 'big')
-    ack = ack.to_bytes(1, 'big')
+def make_noise_pkt(seq_num: int):
+    seq_num += 1
     seq_num = seq_num.to_bytes(2, 'big')
-    data = ack + pkt_len + seq_num
-    ch = checksum(data)
-    ack = 0
-    ack = ack.to_bytes(2, 'big')
-    return ack + pkt_len + seq_num + ch
+    return seq_num + checksum(seq_num)
 
 
 class Receiver:
@@ -117,8 +111,9 @@ if __name__ == '__main__':
                 extract = r.extract()
                 app_layer_data.append(extract)
                 if np.random.binomial(1, option2_error):
-                    noise_sndpkt = make_noise_pkt(ACK, expected_seq_num)
+                    noise_sndpkt = make_noise_pkt(expected_seq_num)
                     r.udt_send(noise_sndpkt)
+                    print('Noise packet sent\n')
                 else:
                     sndpkt = r.make_pkt(expected_seq_num)
                     r.udt_send(sndpkt)
