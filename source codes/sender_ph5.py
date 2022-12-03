@@ -51,7 +51,7 @@ class Packet:
 
 def time_out(t):
     if time.time() - t > timeout:
-        print('\t\t\t ############  TIME OUT' * 2)
+        print('\t #######  TIME OUT #######' )
         return True
     return False
 
@@ -94,15 +94,13 @@ class Sender:
 def data_pkt_error(pkt: bytes):
     error = int(np.random.randint(0, 255, 1)[0])
     new_pkt = pkt[:error] + error.to_bytes(1, 'big') + pkt[error + 1:]
-    print("## -------ERROR---------  ##", f'Old ch= {checksum(pkt)} New ch= {checksum(new_pkt)}',
-          "## -------ERROR--------- ##")
     return new_pkt
 
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('-o', type=int, required=True)
-    arg_parser.add_argument('-p', type=float, required=True)
+    arg_parser.add_argument('-p', type=float, required=False)
     arg_parser.add_argument('-N', type=int, required=True)
     args = arg_parser.parse_args()
     if args.o == 3:
@@ -132,23 +130,25 @@ if __name__ == '__main__':
         base = 0
         nextseqnum = 0
         while not done:
-            print(f'\rseq: {nextseqnum}, Base: {base}', end='')
+            print(f'\rseq: {nextseqnum}, Base: {base}, T: {(time.time() - T)*1000//1}', end='')
             if nextseqnum < base + N:
                 sender.rdt_send(p.packets[nextseqnum])
                 if base == nextseqnum:
-                    T = time.time()
+                    T = time.time()     # Start Timer
                 nextseqnum += 1
                 if nextseqnum > 798:
                     done = True
 
             if time_out(T):
-                T = time.time()
+                print('\nRetransmit')
+                T = time.time()        # Reset Timer
                 for i in range(base, nextseqnum):
                     sender.rdt_send((p.packets[i]))
 
             if sender.rdt_rcv():
                 if not sender.corrupt():
                     base = sender.getAck() + 1
-                    if base != nextseqnum:
-                        T = time.time()
+                    """if base != nextseqnum:
+                        T = time.time()   # Reset Timer"""
+
     print(f"\nElapsed time: {time.time() - st_clock}")

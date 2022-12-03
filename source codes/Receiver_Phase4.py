@@ -37,8 +37,6 @@ def make_file(path, data):
 def data_pkt_error(pkt: bytes):
     error = int(np.random.randint(0, 65535, 1)[0])      # Get a random number between 0 ~ 0xFFFF
     new_pkt = error.to_bytes(2, 'big') + pkt[-2:]       # Replace the seqnum by the random number
-    print("## -------ERROR---------  ##", f'Old ch= {checksum(pkt)} New ch= {checksum(new_pkt)}',
-          "## -------ERROR--------- ##")
     return new_pkt
 
 
@@ -89,7 +87,7 @@ class Receiver:
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('-o', type=int, required=True)
-    arg_parser.add_argument('-p', type=float, required=True)
+    arg_parser.add_argument('-p', type=float, required=False)
     args = arg_parser.parse_args()
     if args.o == 2:
         print(f'Option 2 P={args.p}')
@@ -107,7 +105,6 @@ if __name__ == '__main__':
     app_layer_data = []
     extract = None
     sndpkt = None
-    once_thru = 0
 
     while True:
         if r.rdt_rcv():
@@ -120,8 +117,8 @@ if __name__ == '__main__':
                 expected_seq_num += 1
                 if len(extract) < 1024:
                     break
-        else:
-            r.udt_send(sndpkt)
-            print(f'Dual Ack')
+            else:
+                r.udt_send(sndpkt)
+                print(f'Dual Ack {expected_seq_num}')
 
     make_file('img.bmp', app_layer_data)
