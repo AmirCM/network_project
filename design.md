@@ -61,7 +61,7 @@ ___
 ![Alt text](imgs/Sender_Receiver_Execution.png?raw=true "Optional Title")
 * This image illustrates the transferred BMP file between a UDP client process and a UDP server process.
 
-# Commandline for Execution Start and End for Sender/Receiver
+# Commandline Outputs for Sender/Receiver
 
 # Option 1
 ![Alt text](imgs/Sender_Option_1.png?raw=true "Optional Title")
