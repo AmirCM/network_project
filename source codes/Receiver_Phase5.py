@@ -51,12 +51,21 @@ class Receiver:
         self.sockets.close()
 
     def rdt_rcv(self) -> bool:
-        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
-        if np.random.binomial(1, option5_error):
-            self.recv_pkt = None
-        if self.recv_pkt:
-            return True
-        return False
+        try:
+            self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
+            if np.random.binomial(1, option5_error):
+                self.recv_pkt = None
+            if self.recv_pkt:
+                return True
+            return False
+        except BlockingIOError as e:
+            print('Error is \t\t', e)
+            return False
+        except ConnectionResetError as e:
+            print('Weird', e)
+            return False
+
+
 
     def corrupt(self) -> bool:
         ch = checksum(self.recv_pkt[: -2])  # Compute ch on the incoming pkt

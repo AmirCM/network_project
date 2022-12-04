@@ -135,9 +135,8 @@ if __name__ == '__main__':
                 sender.rdt_send(p.packets[nextseqnum])
                 if base == nextseqnum:
                     T = time.time()     # Start Timer
-                nextseqnum += 1
-                if nextseqnum > 798:
-                    done = True
+                if nextseqnum < 798:
+                    nextseqnum += 1
 
             if time_out(T):
                 T = time.time()        # Reset Timer
@@ -149,5 +148,8 @@ if __name__ == '__main__':
                     base = sender.getAck() + 1
                     if base != nextseqnum:
                         T = time.time()   # Reset Timer
+
+            if base == 799:
+                done = True
 
     print(f"\nElapsed time: {time.time() - st_clock}")
