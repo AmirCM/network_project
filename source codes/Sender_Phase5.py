@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
             if time_out(T):
                 T = time.time()        # Reset Timer
-                for i in range(base, min(nextseqnum, base + N)):
+                for i in range(base, min(nextseqnum, end_buff)):
                     sender.rdt_send((p.packets[i]))
 
             if sender.rdt_rcv():
