@@ -6,7 +6,7 @@ import argparse
 option3_error = 0.00
 option4_error = 0.00
 timeout = 50 / 1000
-
+end_buff = 0
 
 def checksum(data):
     ch = data[0:2]
@@ -69,6 +69,7 @@ class Sender:
             self.rcvpkt = self.sockets.recv(4)  # 2 seq, 2  ch thus 7 Bytes
             if np.random.binomial(1, option4_error):
                 self.rcvpkt = None
+            print(self.getAck())
         except BlockingIOError as e:
             return False
 
@@ -121,6 +122,7 @@ if __name__ == '__main__':
     p = Packet(image)
     p.make_packet()  # creates all packets to send to server with all headers
     print(len(p.packets))
+    end_buff = len(p.packets)
     T = 0
     st_clock = time.time()
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
@@ -130,17 +132,16 @@ if __name__ == '__main__':
         base = 0
         nextseqnum = 0
         while not done:
-            print(f'\rseq: {nextseqnum}, Base: {base}, \t T: {(time.time() - T)*1000//1}', end='')
-            if nextseqnum < base + N:
+            print(f'\rseq: {nextseqnum}, Base: {base}, \t T: {(time.time() - T)*1000//1}, ', end='')
+            if nextseqnum < base + N and nextseqnum < end_buff:
                 sender.rdt_send(p.packets[nextseqnum])
                 if base == nextseqnum:
                     T = time.time()     # Start Timer
-                if nextseqnum < 798:
-                    nextseqnum += 1
+                nextseqnum += 1
 
             if time_out(T):
                 T = time.time()        # Reset Timer
-                for i in range(base, nextseqnum):
+                for i in range(base, min(nextseqnum, base + N)):
                     sender.rdt_send((p.packets[i]))
 
             if sender.rdt_rcv():
