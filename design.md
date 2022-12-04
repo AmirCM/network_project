@@ -2,7 +2,7 @@
 ___
 # Introduction
 ___
-Phase 5 of the network design project implements Go-Back-N protocol over an unreliable UDP channel with bit-errors and loss. Similar to phase 4, phase 5 implementsfive data transfer senarios, namely no loss/bit-errors, ack packet bit-errors, data packet bit-error, ack packet loss, and data packet loss. However, data transfer is implemented using a pipelined method. Two primary approaches used to implemented the pipelined protocol include Go-Back-N and selective repeat. In Go-Back-N, the sender transmits multiple packets without waiting for an acknowledgement, but is constrained by a maximum number of unacknowledges packets allowed in the pipeline. The selective repeat protocol ensures thatthe sender only retransmits the packets that it suspects were received in error by the receiver. Thus, the receiver acknowledges only the individual packets that are received irrespective of the order. 
+Phase 5 of the network design project implements Go-Back-N protocol over an unreliable UDP channel with bit-errors and loss. Similar to phase 4, phase 5 implements five data transfer senarios, namely no loss/bit-errors, ack packet bit-errors, data packet bit-error, ack packet loss, and data packet loss. However, data transfer is implemented using a pipelined method. Two primary approaches used to implemented the pipelined protocol include Go-Back-N and selective repeat. In Go-Back-N, the sender transmits multiple packets without waiting for an acknowledgement, but is constrained by a maximum number of unacknowledges packets allowed in the pipeline. The selective repeat protocol ensures that the sender only retransmits the packets that it suspects were received in error by the receiver. Thus, the receiver acknowledges only the individual packets that are received irrespective of the order. 
 
 # Sender Code
 ___
@@ -99,12 +99,30 @@ ___
 * Commandline for receiver file execution
 
 
-#  Plot Illustrating Completion Time For All Five Options  
-___
-![Alt text](imgs/CompletionTimeGraphPhase4.png?raw=true "Optional Title")
-* This image illustrates the completion time for all 5 options for transferring the same file at 0% loss/error to 60% loss/error in increments of 5%.
-* Option 1 does not have a curve since it is only run with no errors, for which it had a completion time of about 0.788 seconds
-* From the graph, the completion time increases as the error amount rises.
-* Options 3, 4 and 5 all have near identical runtime curves as the error amount increases, peaking at just over 60 seconds at 60% error, while option 2 peaked at around 25 seconds at 60% error.
+# Phase 5 Execution Time Graphs
 
+# Plot Illustrating Completion Time For All Five Options  
+___
+![Alt text](imgs/Graph1_Phase5.jpg?raw=true "Optional Title")
+* This graph illustrates the completion time for all 5 options for transferring the same file at 0% loss/error to 70% loss/error in increments of 5%.
+* As expected, the execution time with errors related to the ACK packets had essentially no impact on the execution time, as cumulative ACKs are sent back to the sender from the receiver
+* For error/loss related to data packets, the execution time grew significantly as the percentage raised, up to over 90 seconds at the 70% mark.
+
+# Plot Comparing Execution Time vs. Timeout Value
+![Alt text](imgs/Graph2_Phase5.jpg?raw=true "Optional Title")
+* This graph shows the execution time for phase 5 as the timeout value was raised from 10 ms to 100 ms in increments of 10 ms. Overall, there is no noticeable impact on the execution time in the presence of ACK packet errors/losses. However, for data packet errors, execution time steadily increased with the timeout value.
+* Based on these results, 10 ms appears to be the ideal timeout value.
+
+# Plot Comparing Execution Time vs. Window Size at 20% Error/Loss
+![Alt text](imgs/Graph3_Phase5.jpg?raw=true "Optional Title")
+* This graph shows the execution time for phase 5 as the window size was adjusted from 1 to 50 packets. 
+* We can see that for the ACK related errors, an increase in the window size dramatically lowers execution time, which is expected since we are sending back a cumulative ACK so certain ACK packet drops would not slow down the program significantly.
+* On the other hand, error related to data packets steadily raised as the window size increased.
+* The best window size would likely be 5 packets to get the benefit of a quick execution time for ACK-related errors while not having the run time for data packet errors being too long.
+
+# Plot Comparing Execution Time by Project Phase for the Bit-Error Options (20%)
+![Alt text](imgs/Graph4_Phase5.jpg?raw=true "Optional Title")
+* This graph compares the execution time of transferring an image file between project phases 3, 4 and 5, at 20% error for both the ACK and data packet options
+* We see that Phase 5 has the fastest execution time in the event of ACK errors, while Phase 3 had the fastest execution time for data packet losses. Based on this graph, phase 3 has the best performance, as the runtime in both options was very low compared to phase 4 and 5.
+* 
 
