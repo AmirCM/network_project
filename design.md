@@ -124,5 +124,4 @@ ___
 ![Alt text](imgs/Graph4_Phase5.jpg?raw=true "Optional Title")
 * This graph compares the execution time of transferring an image file between project phases 3, 4 and 5, at 20% error for both the ACK and data packet options
 * We see that Phase 5 has the fastest execution time in the event of ACK errors, while Phase 3 had the fastest execution time for data packet losses. Based on this graph, phase 3 has the best performance, as the runtime in both options was very low compared to phase 4 and 5.
-* 
 
