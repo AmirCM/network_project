@@ -26,8 +26,8 @@ Sender/Receiver Instruction
   * Navigate to the directory where the python scripts and bmp file are stored.
   * Run the Receiver_Phase5.py first in one window, then run Sender_Phase5.py in the other window.
   * Option 1: The command is as follows the -p can be changed (0~1)
-    * python Receiver_Phase5.py -o 1 -p 0.0 
-    * python Sender_Phase5.py -o 1 -p 0.0 -N 10
+    * python Receiver_Phase5.py -o 1 
+    * python Sender_Phase5.py -o 1 -N 10
   * Option 2: The command is as follows the -p can be changed (0~1)
     * python Receiver_Phase5.py -o 2 -p 0.01 
     * python Sender_Phase5.py -o 2 -p 0.0 -N 10
