@@ -4,7 +4,8 @@ Authors: Amirhossein Behzadfar, Abhi, Patel, Kalvin McCallum
 
 
 Phase 6:
-Implementation of TCP REDT
+Implementation of TCP RDT
+**Note TCP implementation will be completed before the demonstration on Friday
 ---------------------------------------------------------------------
 Enviroment 
   -Windows
