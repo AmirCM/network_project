@@ -22,3 +22,11 @@ class TCP:
                         'rec_window': 0,  # 2B rec window remaining size
                         'checksum': 0,  # 2B
                         }
+
+rtt = 30 / 1000
+alpha = 0.25
+for _ in range(50):
+    stamp = time.time()
+    time.sleep(0.6)
+    rtt = rtt*(1-alpha) +  (time.time() - stamp)*alpha
+    print(rtt, (time.time() - stamp))
