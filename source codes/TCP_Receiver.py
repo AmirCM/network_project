@@ -61,6 +61,12 @@ class TCP:
 
 class Receiver:
 
+    def __init__(self, port):
+        self.sockets = socket(AF_INET, SOCK_DGRAM)  # Receiver socket
+        self.sockets.bind(('', port))  # Receiver socket bind
+        self.dst_addr = None
+        self.recv_pkt = None
+
     def rdt_rcv(self) -> bool:
         self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
         if np.random.binomial(1, option5_error):
@@ -94,6 +100,9 @@ class Receiver:
         # Establish header length
 
 if __name__ == '__main__':
+
+    r = Receiver(12000)
+
     listen = TCPConnection()
     listen.connect('**.**.**.**',  ##)
     listen.readlines()
