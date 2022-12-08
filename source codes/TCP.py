@@ -54,7 +54,8 @@ def check_flag_ack(pkt: bytes):
 
 def check_flag_e(pkt: bytes):
     flags = pkt[10].to_bytes(1, 'big')
-    if flags == 0b11111111:
+    print((flags | 0b10111111), flags)
+    if (flags | 0b10111111) == 0b11111111:
         return True
     else:
         return False
@@ -67,7 +68,8 @@ def check_flag_r(pkt: bytes):
         return False
 
 def check_flag_sync(pkt: bytes):
-    flags = pkt[10].to_bytes(1, 'big')
+    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    print(flags, f'PKT: {pkt[10]}')
     if flags == 0b11111111:
         return True
     else:
@@ -83,7 +85,7 @@ def check_flag_f(pkt: bytes):
 
 class Segment:
     def __init__(self):
-        self.header_map = [4, 1, 1, 0, 2, 2]
+        self.header_map = [4, 4, 1, 1, 0, 2, 2]
         self.header = {
             'seq_num': 0,  # 4B counting bytes of data
             'ack_num': 0,  # Next expected 4B

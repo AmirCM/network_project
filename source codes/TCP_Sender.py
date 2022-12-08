@@ -134,7 +134,9 @@ if __name__ == '__main__':
 
         T = time.time()
         dst_addr = gethostname()
-        client_socket.sendto(packet.make_packet(''.encode()), (dst_addr, 12000))
+        sdt_pkt = packet.make_packet(''.encode())
+        print(sdt_pkt)
+        client_socket.sendto(sdt_pkt, (dst_addr, 12000))
         incoming = 0
         while not time_out(T):
             try:
