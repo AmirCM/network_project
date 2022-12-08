@@ -141,6 +141,7 @@ if __name__ == '__main__':
             if nextseqnum < base + N*MSS:
                 seg = Segment()
                 seg.set_seqNum(nextseqnum)
+                seg.set_head_len(15)
                 sender.rdt_send(seg.make_packet(p.packets[nextseqnum//1000]))
                 stamp_time = time.time()
                 if base == nextseqnum:
@@ -152,6 +153,7 @@ if __name__ == '__main__':
                 for i in range(base, min(nextseqnum, end_buff), MSS):
                     seg = Segment()
                     seg.set_seqNum(i)
+                    seg.set_head_len(15)
                     sender.rdt_send(seg.make_packet(p.packets[i//1000]))
 
             if sender.rdt_rcv():

@@ -5,6 +5,13 @@ import numpy as np
 from TCP import *
 
 
+def make_file(path, data):
+    with open(path, 'wb') as image:
+        for i, p in enumerate(data):
+            skip = i * 1000  # skip variable holds num
+            # ber of bytes already stored
+            image.seek(skip)  # skip over bytes already stored as packets
+            image.write(p)  # writing packets to file
 
 
 class Receiver:
@@ -15,14 +22,14 @@ class Receiver:
         self.port = port
 
     def rdt_rcv(self) -> bool:
-        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(1050)
+        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(1024)
         if not corrupt(self.recv_pkt) and self.recv_pkt:
             return True
         return False
 
     def extract(self):
         pkt_len = get_head_len(self.recv_pkt)
-        return self.recv_pkt[-pkt_len:]
+        return self.recv_pkt[pkt_len:]
 
     def listen(self):
         while True:
@@ -52,38 +59,28 @@ class Receiver:
 
 
 if __name__ == '__main__':
-        r = Receiver(12000)
-        r.sockets.bind(('', 12000))
-        window = np.zeros(819)
-        if r.listen():
+    r = Receiver(12000)
+    r.sockets.bind(('', 12000))
+    window = ['' for _ in range(819)]
+    if r.listen():
 
-            seg = Segment()
-            while True:
+        seg = Segment()
+        while True:
 
-                if r.rdt_rcv():
-                   seqNum = get_seqNum(r.recv_pkt) // 1000
-                   data = r.extract()
-                   if not window[seqNum]:
-                       seg.reset_flags()
-                       window[seqNum] = data
-                       seg.set_ackNum((seqNum+1) * 1000)
-                       seg.flags['A'] = 0b1
-                       r.sockets.send(seg.make_packet(''))
-                       if seqNum == 818:
-                           break
+            if r.rdt_rcv():
+                seqNum = get_seqNum(r.recv_pkt) // 1000
+                data = r.extract()
+                print(len(data))
+                if not window[seqNum]:
+                    seg.reset_flags()
+                    window[seqNum] = data
+                    seg.set_ackNum((seqNum + 1) * 1000)
+                    seg.flags['A'] = 0b1
+                    r.sockets.send(seg.make_packet(''.encode()))
+                    if seqNum == 818:
+                        break
 
-                else:
-                    r.sockets.send(seg.make_packet(''))
+            else:
+                r.sockets.send(seg.make_packet(''.encode()))
 
-        make_file('img.bmp', window)
-
-
-
-
-
-
-
-
-
-
-
+    make_file('img.bmp', window)
