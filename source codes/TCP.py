@@ -24,27 +24,27 @@ def corrupt(pkt: bytes) -> bool:
     return True
 
 def get_seqNum(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[], 'big') == seq_num:
+    if int.from_bytes(pkt[0:4], 'big') == seq_num:
         return True
     return False
 
 def get_ack_num(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[], 'big'):
+    if int.from_bytes(pkt[4:7], 'big'):
         return True
     return False
 
 def get_head_len(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[], 'big'):
+    if int.from_bytes(pkt[8], 'big'):
         return True
     return False
 
 def get_rec_window(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[], 'big'):
+    if int.from_bytes(pkt[11:13], 'big'):
         return True
     return False
 
 def get_checksum(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[], 'big'):
+    if int.from_bytes(pkt[13:15], 'big'):
         return True
     return False
 
