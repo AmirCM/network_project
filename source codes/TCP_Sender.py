@@ -2,7 +2,7 @@ import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
 import argparse
-
+from TCP import *
 option3_error = 0.00
 option4_error = 0.00
 timeout = 30 / 1000
@@ -99,8 +99,13 @@ def data_pkt_error(pkt: bytes):
 
 
 if __name__ == '__main__':
+    with socket(AF_INET, SOCK_DGRAM) as client_socket:
+        packet = Segment(''.encode())
+        packet.flags['S'] = 0b1
+        packet.header['seq_num'] = 1
 
-if False:
+
+"""if False:
     N = args.N
     print(f'**** GB{N} ****')
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
@@ -149,3 +154,4 @@ if False:
                 done = True
 
     print(f"\nElapsed time: {time.time() - st_clock}")
+"""

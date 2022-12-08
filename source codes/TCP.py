@@ -19,9 +19,8 @@ def checksum(data):
 
 class Segment:
     def __init__(self):
-        self.header_map = [2, 2, 4, 1, 1, 0, 2, 2]
-        self.header = {'source_port': 0,  # 2B
-                       'dest_port': 0,  # 2B
+        self.header_map = [4, 1, 1, 0, 2, 2]
+        self.header = {
                        'seq_num': 0,  # 4B counting bytes of data
                        'ack_num': 0,  # Next expected 4B
                        'head_len': 0,  # 1B
