@@ -157,7 +157,19 @@ class TCP:
         self.s.bind((HOST, PORT))
 
     def listen(self):
-        self.recv_pkt, self.dst_addr = self.s.recvfrom(1024)
+        while True:
+            incoming, address = self.s.recvfrom(1024)
+            if not corrupt(incoming):
+                break
+        if check_flag_sync(incoming):
+            seq_num = get_seqNum(incoming)
+            packet = Segment()
+            packet.header['ack_num'] = seq_num + 1
+            packet.header['seq_num'] = 10
+            packet.flags['A'] = 0b1
+            packet.flags['S'] = 0b1
+            self.tcp_send(packet.make_packet(''.encode()))
+            incoming, address = self.s.recvfrom(1024)
 
     def tcp_recv(self, l):
         # Check checksum
