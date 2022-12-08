@@ -40,7 +40,7 @@ class Segment:
                       }
         self.data = None
         
-    def reset_flag(self): 
+    def reset_flags(self): 
          self.flags = {'C': 0b0,  # 1 bit congestion
                       'E': 0b0,  # 1 bit congestion
                       'U': 0b0,  # 1 bit
