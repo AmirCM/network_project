@@ -2,6 +2,15 @@ import socket
 import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
+from TCP import *
+
+timeout = 30 / 1000
+
+def time_out(t):
+    if time.time() - t > timeout:
+        # print('\t #######  TIME OUT #######' )
+        return True
+    return False
 
 class TCPConnection:
     def __init__(self, sock=None):
@@ -101,8 +110,8 @@ class Receiver:
 
 if __name__ == '__main__':
 
-    r = Receiver(12000)
+    with socket(AF_INET, SOCK_DGRAM) as server_socket:
+        server = TCP(server_socket)
+        incoming = server.s.recvfrom(1024)
 
-    listen = TCPConnection()
-    listen.connect('**.**.**.**',  ##)
-    listen.readlines()
+
