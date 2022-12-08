@@ -123,7 +123,7 @@ class Segment:
     def set_seqNum(seq_num: int):
         self.header["seq_num"] = seq_num
 
-    def set_ack_num(ack_num: int):
+    def set_ackNum(ack_num: int):
         self.header["ack_num"] = ack_num
 
     def set_head_len(head_len: int):
