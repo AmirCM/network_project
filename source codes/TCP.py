@@ -18,35 +18,26 @@ def checksum(data):
 
 
 def corrupt(pkt: bytes) -> bool:
-    ch = checksum(pkt[: -2])  # Compute ch on the incoming pkt
-    if ch == pkt[-2:]:  # Compare ch to the incoming pkt ch
+    ch = checksum(pkt[13:15])  # Compute ch on the incoming pkt
+    if ch == pkt[13:15]:  # Compare ch to the incoming pkt ch
         return False
     return True
 
 def get_seqNum(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[0:4], 'big') == seq_num:
-        return True
-    return False
+    return int.from_bytes(pkt[0:4], 'big')
 
 def get_ack_num(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[4:7], 'big'):
-        return True
-    return False
+    return int.from_bytes(pkt[4:7], 'big')
 
 def get_head_len(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[8], 'big'):
-        return True
-    return False
+    return int.from_bytes(pkt[8], 'big')
 
 def get_rec_window(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[11:13], 'big'):
-        return True
-    return False
+    return int.from_bytes(pkt[11:13], 'big')
 
 def get_checksum(pkt: bytes) -> bool:
-    if int.from_bytes(pkt[13:15], 'big'):
-        return True
-    return False
+    return int.from_bytes(pkt[13:15], 'big')
+
 
 def check_flag_c(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
@@ -54,11 +45,13 @@ def check_flag_c(pkt: bytes):
     else:
         return False
 
+
 def check_flag_ack(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
         return True
     else:
         return False
+
 
 def check_flag_e(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
@@ -66,17 +59,20 @@ def check_flag_e(pkt: bytes):
     else:
         return False
 
+
 def check_flag_r(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
         return True
     else:
         return False
 
+
 def check_flag_sync(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
         return True
     else:
         return False
+
 
 def check_flag_f(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
