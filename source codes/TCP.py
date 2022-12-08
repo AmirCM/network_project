@@ -89,8 +89,8 @@ class TCP:
             incoming, address = self.s.recvfrom(1024)
             if not corrupt(incoming):
                 break
-        # check seq num and other stuff
-        seq_num = 100
+        seq_num = get_seqNum(incoming)
+        syn_bit = get_
         packet = Segment()
         packet.header['ack_num'] = seq_num + 1
         packet.header['seq_num'] = 10
