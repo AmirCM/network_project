@@ -99,23 +99,8 @@ def data_pkt_error(pkt: bytes):
 
 
 if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('-o', type=int, required=True)
-    arg_parser.add_argument('-p', type=float, required=False)
-    arg_parser.add_argument('-N', type=int, required=True)
-    args = arg_parser.parse_args()
-    if args.o == 3:
-        print(f'Option 3 P={args.p}')
-        option3_error = args.p
-    elif args.o == 4:
-        print(f'Option 4 P={args.p}')
-        option4_error = args.p
-    elif args.o <= 5:
-        option2_error = 0.00
-        option5_error = 0.00
-    else:
-        print(f'Invalid input! {args.o} only option 3&4')
 
+if False:
     N = args.N
     print(f'**** GB{N} ****')
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
