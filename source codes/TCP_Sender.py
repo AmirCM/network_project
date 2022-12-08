@@ -99,8 +99,8 @@ def data_pkt_error(pkt: bytes):
 
 def hand_shake(sock: socket):
     x = 100
-    lient_socket.setblocking(False)
-    sender = TCP(client_socket)
+    sock.setblocking(False)
+    sender = TCP(sock)
     packet = Segment()
     packet.flags['S'] = 0b1
     packet.header['seq_num'] = x
