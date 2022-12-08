@@ -18,11 +18,71 @@ def checksum(data):
 
 
 def corrupt(pkt: bytes) -> bool:
-    pass
-
+    ch = checksum(pkt[: -2])  # Compute ch on the incoming pkt
+    if ch == pkt[-2:]:  # Compare ch to the incoming pkt ch
+        return False
+    return True
 
 def get_seqNum(pkt: bytes) -> bool:
-    pass
+    if int.from_bytes(pkt[], 'big') == seq_num:
+        return True
+    return False
+
+def get_ack_num(pkt: bytes) -> bool:
+    if int.from_bytes(pkt[], 'big'):
+        return True
+    return False
+
+def get_head_len(pkt: bytes) -> bool:
+    if int.from_bytes(pkt[], 'big'):
+        return True
+    return False
+
+def get_rec_window(pkt: bytes) -> bool:
+    if int.from_bytes(pkt[], 'big'):
+        return True
+    return False
+
+def get_checksum(pkt: bytes) -> bool:
+    if int.from_bytes(pkt[], 'big'):
+        return True
+    return False
+
+def check_flag_c(pkt: bytes):
+    if int.from_bytes(pkt[6], 'big'):
+        return True
+    else:
+        return False
+
+def check_flag_ack(pkt: bytes):
+    if int.from_bytes(pkt[7], 'big'):
+        return True
+    else:
+        return False
+
+def check_flag_e(pkt: bytes):
+    if int.from_bytes(pkt[8], 'big'):
+        return True
+    else:
+        return False
+
+def check_flag_r(pkt: bytes):
+    if int.from_bytes(pkt[9], 'big'):
+        return True
+    else:
+        return False
+
+def check_flag_sync(pkt: bytes):
+    if int.from_bytes(pkt[10], 'big'):
+        return True
+    else:
+        return False
+
+def check_flag_f(pkt: bytes):
+    if int.from_bytes(pkt[11], 'big'):
+        return True
+    else:
+        return False
 
 class Segment:
     def __init__(self):
@@ -56,6 +116,18 @@ class Segment:
                       'S': 0b0,  # 1 bit flow
                       'F': 0b0,  # 1 bit flow
                       }
+            
+    def set_seqNum(seq_num: int):
+        pass
+
+    def set_ack_num(ack_num: int):
+        pass
+
+    def set_head_len(head_len: int):
+        pass
+
+    def set_rec_window(rec_window: int):
+        pass
 
     def make_packet(self, data):
         for i, h in enumerate(self.header.values()):
@@ -85,19 +157,7 @@ class TCP:
         self.s.bind((HOST, PORT))
 
     def listen(self):
-        while True:
-            incoming, address = self.s.recvfrom(1024)
-            if not corrupt(incoming):
-                break
-        # check seq num and other stuff
-        seq_num = 100
-        packet = Segment()
-        packet.header['ack_num'] = seq_num + 1
-        packet.header['seq_num'] = 10
-        packet.flags['A'] = 0b1
-        packet.flags['S'] = 0b1
-        self.tcp_send(packet.make_packet(''.encode()))
-        incoming, address = self.s.recvfrom(1024)
+        self.recv_pkt, self.dst_addr = self.s.recvfrom(1024)
 
     def tcp_recv(self, l):
         # Check checksum
