@@ -15,7 +15,7 @@ class Receiver:
         self.port = port
 
     def rdt_rcv(self) -> bool:
-        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(pkt_len)
+        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(1050)
         if not corrupt(self.recv_pkt) and self.recv_pkt:
             return True
         return False
@@ -42,10 +42,10 @@ class Receiver:
             return False
 
         while True:
-            incoming, dst_addr = sockets.recvfrom(1024)
+            incoming, dst_addr = self.sockets.recvfrom(1024)
             if not corrupt(incoming):
                 break
-        if check_flag_ack(incoming) and get_ack_num(incoming) == 11:
+        if check_flag_ack(incoming) and get_ackNum(incoming) == 11:
             print('Connection successful')
             self.sockets.connect(dst_addr)
             return True
