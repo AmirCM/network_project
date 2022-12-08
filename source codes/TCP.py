@@ -23,64 +23,75 @@ def corrupt(pkt: bytes) -> bool:
         return False
     return True
 
+
 def get_seqNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[0:4], 'big')
+
 
 def get_ackNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[4:8], 'big')
 
+
 def get_head_len(pkt: bytes) -> int:
-    return int.from_bytes(pkt[8], 'big')
+    return int.from_bytes(pkt[8:9], 'big')
+
 
 def get_rec_window(pkt: bytes) -> int:
     return int.from_bytes(pkt[11:13], 'big')
 
+
 def get_checksum(pkt: bytes) -> int:
     return int.from_bytes(pkt[13:15], 'big')
 
+
 def check_flag_c(pkt: bytes):
-    flags = (pkt[10]| 0b01111111).to_bytes(1, 'big')
-    flags = int.from_bytes(flags ,'big')
+    flags = (pkt[10] | 0b01111111).to_bytes(1, 'big')
+    flags = int.from_bytes(flags, 'big')
     if flags == 255:
         return True
     else:
         return False
+
 
 def check_flag_ack(pkt: bytes):
-    flags = (pkt[10]| 0b11101111).to_bytes(1, 'big')
-    flags = int.from_bytes(flags ,'big')
+    flags = (pkt[10] | 0b11101111).to_bytes(1, 'big')
+    flags = int.from_bytes(flags, 'big')
     if flags == 255:
         return True
     else:
         return False
+
 
 def check_flag_e(pkt: bytes):
-    flags = (pkt[10]| 0b10111111).to_bytes(1, 'big')
-    flags = int.from_bytes(flags ,'big')
+    flags = (pkt[10] | 0b10111111).to_bytes(1, 'big')
+    flags = int.from_bytes(flags, 'big')
     if flags == 255:
         return True
     else:
         return False
+
 
 def check_flag_r(pkt: bytes):
-    flags = (pkt[10]| 0b11111011).to_bytes(1, 'big')
-    flags = int.from_bytes(flags ,'big')
+    flags = (pkt[10] | 0b11111011).to_bytes(1, 'big')
+    flags = int.from_bytes(flags, 'big')
     if flags == 255:
         return True
     else:
         return False
+
 
 def check_flag_sync(pkt: bytes):
-    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
-    flags = int.from_bytes(flags ,'big')
+    flags = (pkt[10] | 0b11111101).to_bytes(1, 'big')
+    flags = int.from_bytes(flags, 'big')
     if flags == 255:
         return True
     else:
         return False
 
+
 def check_flag_f(pkt: bytes):
-    flags = (pkt[10]| 0b11111110).to_bytes(1, 'big')
-    flags = int.from_bytes(flags ,'big')
+    flags = (pkt[10] | 0b11111110).to_bytes(1, 'big')
+    flags = int.from_bytes(flags, 'big')
     if flags == 255:
         return True
     else:
@@ -142,11 +153,12 @@ class Segment:
             else:
                 h = 0b0
                 for f in self.flags.values():
-                    h = h<<1 | f
+                    h = h << 1 | f
                 chunck += h.to_bytes(1, 'big')
 
         ch = checksum(chunck + data)
         return chunck + ch + data
+
 
 class TCP:
     def __init__(self, SOCKET: socket):
