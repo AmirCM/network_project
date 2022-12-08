@@ -120,16 +120,16 @@ class Segment:
                       'F': 0b0,  # 1 bit flow
                       }
 
-    def set_seqNum(seq_num: int):
+    def set_seqNum(self, seq_num: int):
         self.header["seq_num"] = seq_num
 
-    def set_ackNum(ack_num: int):
+    def set_ackNum(self, ack_num: int):
         self.header["ack_num"] = ack_num
 
-    def set_head_len(head_len: int):
+    def set_head_len(self, head_len: int):
         self.header["head_len"] = head_len
 
-    def set_rec_window(rec_window: int):
+    def set_rec_window(self, rec_window: int):
         self.header["rec_window"] = rec_window
 
     def make_packet(self, data):
