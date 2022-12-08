@@ -47,7 +47,7 @@ def check_flag_c(pkt: bytes):
         return False
 
 def check_flag_ack(pkt: bytes):
-    flags = (pkt[10]| 0b01111111).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b11101111).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
@@ -55,7 +55,7 @@ def check_flag_ack(pkt: bytes):
         return False
 
 def check_flag_e(pkt: bytes):
-    flags = (pkt[10]| 0b11101101).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b10111111).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
