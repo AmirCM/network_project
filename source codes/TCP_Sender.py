@@ -97,22 +97,32 @@ def data_pkt_error(pkt: bytes):
     new_pkt = pkt[:error] + error.to_bytes(1, 'big') + pkt[error + 1:]
     return new_pkt
 
+def hand_shake(sock: socket):
+    lient_socket.setblocking(False)
+    sender = TCP(client_socket)
+    packet = Segment()
+    packet.flags['S'] = 0b1
+    packet.header['seq_num'] = 100
+    T = time.time()
+    sender.tcp_send(packet.make_packet(''.encode()))
+    while not time_out(T):
+        incoming = sender.s.recvfrom(1024)
+        if incoming:
+            break
+        print('\rWait', end='')
+    if corrupt(incoming):
+        if 101 == 101 and 1:  # incoming AckNum, Ack
+            packet.header['ack_num'] = 1  # incoming SeqNum + 1
+            packet.flags['A'] = 0b1
+            sender.tcp_send(packet.make_packet(''.encode()))
+            return 1
+    return 0
+
 
 if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        client_socket.setblocking(False)
-        sender = TCP(client_socket)
-        packet = Segment()
-        packet.flags['S'] = 0b1
-        packet.header['seq_num'] = 100
-        T = time.time()
-        sender.tcp_send(packet.make_packet(''.encode()))
-        while not time_out(T):
-            incoming = sender.s.recvfrom(1024)
-            if incoming:
-                break
-            print('\rWait', end='')
-        if incoming:
+        print(hand_shake(client_socket))
+
 
 
 
