@@ -23,21 +23,20 @@ def corrupt(pkt: bytes) -> bool:
         return False
     return True
 
-def get_seqNum(pkt: bytes) -> bool:
+def get_seqNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[0:4], 'big')
 
-def get_ack_num(pkt: bytes) -> bool:
+def get_ack_num(pkt: bytes) -> int:
     return int.from_bytes(pkt[4:7], 'big')
 
-def get_head_len(pkt: bytes) -> bool:
+def get_head_len(pkt: bytes) -> int:
     return int.from_bytes(pkt[8], 'big')
 
-def get_rec_window(pkt: bytes) -> bool:
+def get_rec_window(pkt: bytes) -> int:
     return int.from_bytes(pkt[11:13], 'big')
 
-def get_checksum(pkt: bytes) -> bool:
+def get_checksum(pkt: bytes) -> int:
     return int.from_bytes(pkt[13:15], 'big')
-
 
 def check_flag_c(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
@@ -45,13 +44,11 @@ def check_flag_c(pkt: bytes):
     else:
         return False
 
-
 def check_flag_ack(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
         return True
     else:
         return False
-
 
 def check_flag_e(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
@@ -59,13 +56,11 @@ def check_flag_e(pkt: bytes):
     else:
         return False
 
-
 def check_flag_r(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
         return True
     else:
         return False
-
 
 def check_flag_sync(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
@@ -73,24 +68,24 @@ def check_flag_sync(pkt: bytes):
     else:
         return False
 
-
 def check_flag_f(pkt: bytes):
     if int.from_bytes(pkt[10], 'big'):
         return True
     else:
         return False
 
+
 class Segment:
     def __init__(self):
         self.header_map = [4, 1, 1, 0, 2, 2]
         self.header = {
-                       'seq_num': 0,  # 4B counting bytes of data
-                       'ack_num': 0,  # Next expected 4B
-                       'head_len': 0,  # 1B
-                       'empty': 0,  # 1B
-                       'rec_window': 0,  # 2B rec window remaining size
-                       'checksum': 0,  # 2B
-                       }
+            'seq_num': 0,  # 4B counting bytes of data
+            'ack_num': 0,  # Next expected 4B
+            'head_len': 0,  # 1B
+            'empty': 0,  # 1B
+            'rec_window': 0,  # 2B rec window remaining size
+            'checksum': 0,  # 2B
+        }
         self.flags = {'C': 0b0,  # 1 bit congestion
                       'E': 0b0,  # 1 bit congestion
                       'U': 0b0,  # 1 bit
@@ -101,9 +96,9 @@ class Segment:
                       'F': 0b0,  # 1 bit flow
                       }
         self.data = None
-        
-    def reset_flags(self): 
-         self.flags = {'C': 0b0,  # 1 bit congestion
+
+    def reset_flags(self):
+        self.flags = {'C': 0b0,  # 1 bit congestion
                       'E': 0b0,  # 1 bit congestion
                       'U': 0b0,  # 1 bit
                       'A': 0b0,  # 1 bit Ack
@@ -112,18 +107,18 @@ class Segment:
                       'S': 0b0,  # 1 bit flow
                       'F': 0b0,  # 1 bit flow
                       }
-            
+
     def set_seqNum(seq_num: int):
-        pass
+        self.header["seq_num"] = seq_num
 
     def set_ack_num(ack_num: int):
-        pass
+        self.header["ack_num"] = ack_num
 
     def set_head_len(head_len: int):
-        pass
+        self.header["head_len"] = head_len
 
     def set_rec_window(rec_window: int):
-        pass
+        self.header["rec_window"] = rec_window
 
     def make_packet(self, data):
         for i, h in enumerate(self.header.values()):
