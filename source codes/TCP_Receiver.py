@@ -50,8 +50,8 @@ class TCP:
                         'checksum': 0,  # 2B
                         }
 
-    self.server_port = 20001
-    server_addr = (host_ip, self.server_port)  # address of server (IP, Port)
+    # self.server_port = 20001
+    # server_addr = (host_ip, self.server_port)  # address of server (IP, Port)
 
     def checksum(data):
         ch = data[0:2]
@@ -99,19 +99,19 @@ class Receiver:
         seq_num = seq_num.to_bytes(2, 'big')
         return seq_num + checksum(seq_num)
 
-    def tcp_send(self, packet: bytes):
-        # Add TCP send protocol
-
-    def rec_window(self):
-        # Create receiver window
-
-    def head_len(self):
-        # Establish header length
 
 if __name__ == '__main__':
 
     with socket(AF_INET, SOCK_DGRAM) as server_socket:
         server = TCP(server_socket)
-        incoming = server.s.recvfrom(1024)
+        server.listen()
+
+
+
+
+
+
+
+
 
 
