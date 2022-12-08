@@ -17,6 +17,13 @@ def checksum(data):
     return ch
 
 
+def corrupt(pkt: bytes) -> bool:
+    pass
+
+
+def get_seqNum(pkt: bytes) -> bool:
+    pass
+
 class Segment:
     def __init__(self):
         self.header_map = [4, 1, 1, 0, 2, 2]
@@ -80,13 +87,13 @@ class TCP:
     def listen(self):
         self.recv_pkt, self.dst_addr = self.s.recvfrom(1024)
 
-    def tcp_recv(self):
+    def tcp_recv(self, l):
         # Check checksum
         # Handle seq
-        return self.s.recv(1024)
+        return self.s.recv(l)
 
-    def tcp_send(self):
-        return self.s.sendto(data, (gethostname(), 12000))
+    def tcp_send(self, pkt):
+        return self.s.sendto(pkt, (gethostname(), 12000))
 
     def accept(self) -> Tuple[socket, tuple]:
         if self.s.connect(self.dst_addr) == 0:

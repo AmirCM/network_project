@@ -100,9 +100,22 @@ def data_pkt_error(pkt: bytes):
 
 if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        packet = Segment(''.encode())
+        client_socket.setblocking(False)
+        sender = TCP(client_socket)
+        packet = Segment()
         packet.flags['S'] = 0b1
-        packet.header['seq_num'] = 1
+        packet.header['seq_num'] = 100
+        T = time.time()
+        sender.tcp_send(packet.make_packet(''.encode()))
+        while not time_out(T):
+            incoming = sender.s.recvfrom(1024)
+            if incoming:
+                break
+            print('\rWait', end='')
+        if incoming:
+
+
+
 
 
 """if False:
