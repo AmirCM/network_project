@@ -27,7 +27,7 @@ def get_seqNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[0:4], 'big')
 
 def get_ack_num(pkt: bytes) -> int:
-    return int.from_bytes(pkt[4:7], 'big')
+    return int.from_bytes(pkt[4:8], 'big')
 
 def get_head_len(pkt: bytes) -> int:
     return int.from_bytes(pkt[8], 'big')
@@ -186,8 +186,6 @@ class TCP:
                 return True
             else:
                 return False
-
-
 
     def tcp_recv(self, l):
         # Check checksum
