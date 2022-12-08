@@ -101,7 +101,6 @@ class Receiver:
 
 
 if __name__ == '__main__':
-
     with socket(AF_INET, SOCK_DGRAM) as server_socket:
         server = TCP(server_socket)
         server.listen()

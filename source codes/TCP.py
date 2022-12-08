@@ -158,6 +158,7 @@ class TCP:
             if not corrupt(incoming):
                 break
         if check_flag_sync(incoming):
+            print(incoming)
             seq_num = get_seqNum(incoming)
             packet = Segment()
             packet.header['ack_num'] = seq_num + 1
@@ -165,7 +166,20 @@ class TCP:
             packet.flags['A'] = 0b1
             packet.flags['S'] = 0b1
             self.tcp_send(packet.make_packet(''.encode()))
+        else:
+            return False
+
+        while True:
             incoming, address = self.s.recvfrom(1024)
+            if not corrupt(incoming):
+                break
+            print(incoming)
+            if check_flag_ack(incoming) & get_ack_num(incoming) == 11:
+                return True
+            else:
+                return False
+
+
 
     def tcp_recv(self, l):
         # Check checksum
