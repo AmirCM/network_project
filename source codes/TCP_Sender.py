@@ -3,10 +3,12 @@ from socket import *  # imports socket module to enable network communication
 import numpy as np
 import argparse
 from TCP import *
+
 option3_error = 0.00
 option4_error = 0.00
 timeout = 30 / 1000
 end_buff = 0
+
 
 def checksum(data):
     ch = data[0:2]
@@ -28,25 +30,18 @@ class Packet:
     def make_packet(self):
         i = 0  # initialize loop variable
         while True:
-            skip = i * 1024  # skip variable holds number of bytes already stored
+            skip = i * 1000  # skip variable holds number of bytes already stored
             self.data.seek(skip)  # skip over bytes already stored as packets
-            chunk = self.data.read(1024)  # store 1024 bytes of file as a packet
-            seqnum = i
-            data_len = len(chunk)
-            chunk = chunk + data_len.to_bytes(2, 'big') + seqnum.to_bytes(2, 'big')
+            chunk = self.data.read(1000)  # store 1024 bytes of file as a packet
+            self.packets.append(chunk)  # add Segment to array
 
-            ch = checksum(chunk)
-
-            sndpkt = chunk + ch
-            self.packets.append(sndpkt)  # add packet to array
-            if len(chunk) < 1024:  # once a packet is less than 1024 bytes, end of file reached, so break
+            if len(chunk) < 1000:  # once a packet is less than 1024 bytes, end of file reached, so break
                 image.close()  # close bmp file
                 break
             i += 1  # increment loop variable
 
     def packet_at(self, i):
         return self.packets[i]
-
 
 
 def time_out(t):
@@ -66,7 +61,9 @@ class Sender:
 
     def rdt_rcv(self):
         try:
-            self.rcvpkt = self.sockets.recv(4)  # 2 seq, 2  ch thus 7 Bytes
+            self.rcvpkt = self.sockets.recv(20)  # 2 seq, 2  ch thus 7 Bytes
+            if corrupt(self.rcvpkt):
+                return False
             if np.random.binomial(1, option4_error):
                 self.rcvpkt = None
             # print(self.getAck())
@@ -77,92 +74,56 @@ class Sender:
             return True
         return False
 
-    def corrupt(self):
-        ch = checksum(self.rcvpkt[:-2])  # Compute ch on the incoming pkt
-        if ch == self.rcvpkt[-2:]:  # Compare ch to the incoming pkt ch
-            return False
-        return True
-
     def rdt_send(self, data):
-        if np.random.binomial(1, option3_error):
-            data = data_pkt_error(data)
-        self.sockets.sendto(data, (self.destination, self.port))
+        # self.sockets.sendto(data, (self.destination, self.port))
+        self.sockets.send(data)
 
-    def getAck(self):
-        return int.from_bytes(self.rcvpkt[-4:-2], 'big')
-
-
-def data_pkt_error(pkt: bytes):
-    error = int(np.random.randint(0, 255, 1)[0])
-    new_pkt = pkt[:error] + error.to_bytes(1, 'big') + pkt[error + 1:]
-    return new_pkt
-
-def hand_shake(sock: socket):
-    x = 100
-    # sock.setblocking(False)
-    sender = TCP(sock)
-    packet = Segment()
-    packet.flags['S'] = 0b1
-    packet.header['seq_num'] = x
-    T = time.time()
-    sender.tcp_send(packet.make_packet(''.encode()))
-    incoming = 0
-    while not time_out(T):
-        try:
-            incoming, addr = sender.s.recv(1024)
-            if incoming:
-                break
-        except:
-            print('\rWait', end='')
-    if incoming and corrupt(incoming):
-        if (x + 1) == get_ack_num(incoming) and check_flag_ack(incoming):  # Incoming AckNum = x + 1, Ack
-            packet.header['ack_num'] = get_seqNum(incoming) + 1  # incoming SeqNum + 1
-            packet.flags['A'] = 0b1
-            sender.tcp_send(packet.make_packet(''.encode()))
-            return 1
-    return 0
-
-
-if __name__ == '__main__':
-    with socket(AF_INET, SOCK_DGRAM) as client_socket:
+    def handShake(self):
         x = 100
-        # sock.setblocking(False)
-        packet = Segment()
+        seg = Segment()
 
-        packet.flags['S'] = 0b1
-        packet.header['seq_num'] = x
+        seg.flags['S'] = 0b1
+        seg.set_seqNum(x)
 
         T = time.time()
-        dst_addr = gethostname()
-        sdt_pkt = packet.make_packet(''.encode())
+        sdt_pkt = seg.make_packet(''.encode())
         print(sdt_pkt)
-        client_socket.sendto(sdt_pkt, (dst_addr, 12000))
+        self.sockets.sendto(sdt_pkt, (self.destination, self.port))
         incoming = 0
         while not time_out(T):
             try:
-                incoming, addr = sender.s.recv(1024)
+                incoming, addr = self.sockets.recvfrom(1024)
                 if incoming:
                     break
             except:
                 print('\rWait', end='')
-        if incoming and corrupt(incoming):
-            if (x + 1) == get_ack_num(incoming) and check_flag_ack(incoming):  # Incoming AckNum = x + 1, Ack
-                packet.header['ack_num'] = get_seqNum(incoming) + 1  # incoming SeqNum + 1
-                packet.flags['A'] = 0b1
-                sender.tcp_send(packet.make_packet(''.encode()))
+        # print(f'NEW: {get_seqNum(incoming)}, {check_flag_ack(incoming)}, {get_ack_num(incoming)}')
+        if not corrupt(incoming):
+            print(incoming)
+            if (x + 1) == get_ackNum(incoming) and check_flag_ack(incoming):  # Incoming AckNum = x + 1, Ack
+                seg.set_ackNum(get_seqNum(incoming) + 1)  # incoming SeqNum + 1
+                seg.flags['A'] = 0b1
+                self.sockets.sendto(seg.make_packet(''.encode()), (self.destination, self.port))
+                self.sockets.connect((self.destination, self.port))
+                print('Shaked!!')
 
 
-"""if False:
-    N = args.N
-    print(f'**** GB{N} ****')
+if __name__ == '__main__':
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
     p = Packet(image)
     p.make_packet()  # creates all packets to send to server with all headers
     print(len(p.packets))
-    end_buff = len(p.packets)
-    T = 0
-    st_clock = time.time()
+    N = 3
+    MSS = 1000
+    # N = args.N
+    print(f'**** GB{N} ****')
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
+        sender = Sender(12000, gethostname(), client_socket)
+        sender.handShake()
+
+        T = 0
+        st_clock = time.time()
+
         client_socket.setblocking(False)
         sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
         done = False
@@ -172,33 +133,36 @@ if __name__ == '__main__':
         dev_rtt = 0
         stamp_time = 0
         while not done:
-            print(f'\n\rseq: {nextseqnum}, Base: {base}, \t T: {rtt_time*1000//1}ms, STD: {dev_rtt*1000//1}ms', end='')
+            print(f'\n\rseq: {nextseqnum}, Base: {base}, \t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',
+                end='')
             if rtt_time > 0.01:
-                timeout = rtt_time + dev_rtt*4
+                timeout = rtt_time + dev_rtt * 4
 
-            if nextseqnum < base + N and nextseqnum < end_buff:
-                sender.rdt_send(p.packets[nextseqnum])
+            if nextseqnum < base + N*MSS:
+                seg = Segment()
+                seg.set_seqNum(nextseqnum)
+                sender.rdt_send(seg.make_packet(p.packets[nextseqnum//1000]))
                 stamp_time = time.time()
                 if base == nextseqnum:
-                    T = time.time()     # Start Timer
-                nextseqnum += 1
+                    T = time.time()  # Start Timer
+                nextseqnum += MSS
 
             if time_out(T):
-                T = time.time()        # Reset Timer
-                for i in range(base, min(nextseqnum, end_buff)):
-                    sender.rdt_send((p.packets[i]))
+                T = time.time()  # Reset Timer
+                for i in range(base, min(nextseqnum, end_buff), MSS):
+                    seg = Segment()
+                    seg.set_seqNum(i)
+                    sender.rdt_send(seg.make_packet(p.packets[i//1000]))
 
             if sender.rdt_rcv():
-                if not sender.corrupt():
-                    rtt = time.time() - stamp_time
-                    rtt_time = rtt_time*0.875 + rtt * 0.125
-                    dev_rtt = dev_rtt*0.75 + np.abs(rtt - rtt_time)*0.25
-                    base = sender.getAck() + 1
-                    if base != nextseqnum:
-                        T = time.time()   # Reset Timer
+                rtt = time.time() - stamp_time
+                rtt_time = rtt_time * 0.875 + rtt * 0.125
+                dev_rtt = dev_rtt * 0.75 + np.abs(rtt - rtt_time) * 0.25
 
-            if base == 799:
-                done = True
+                base = get_ackNum(sender.rcvpkt)
+                if base != nextseqnum:
+                    T = time.time()  # Reset Timer
+
+
 
     print(f"\nElapsed time: {time.time() - st_clock}")
-"""
