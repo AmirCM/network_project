@@ -39,7 +39,7 @@ def get_checksum(pkt: bytes) -> int:
     return int.from_bytes(pkt[13:15], 'big')
 
 def check_flag_c(pkt: bytes):
-    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b01111111).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
@@ -47,7 +47,7 @@ def check_flag_c(pkt: bytes):
         return False
 
 def check_flag_ack(pkt: bytes):
-    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b01111111).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
@@ -55,7 +55,7 @@ def check_flag_ack(pkt: bytes):
         return False
 
 def check_flag_e(pkt: bytes):
-    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b11101101).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
@@ -63,7 +63,7 @@ def check_flag_e(pkt: bytes):
         return False
 
 def check_flag_r(pkt: bytes):
-    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b11111011).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
@@ -79,7 +79,7 @@ def check_flag_sync(pkt: bytes):
         return False
 
 def check_flag_f(pkt: bytes):
-    flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    flags = (pkt[10]| 0b11111110).to_bytes(1, 'big')
     flags = int.from_bytes(flags ,'big')
     if flags == 255:
         return True
