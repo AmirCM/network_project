@@ -39,41 +39,46 @@ def get_checksum(pkt: bytes) -> int:
     return int.from_bytes(pkt[13:15], 'big')
 
 def check_flag_c(pkt: bytes):
-    if int.from_bytes(pkt[10], 'big'):
+    flags =  pkt[10].to_bytes(1, 'big')
+    if flags == 0b11111111:
         return True
     else:
         return False
 
 def check_flag_ack(pkt: bytes):
-    if int.from_bytes(pkt[10], 'big'):
+    flags = pkt[10].to_bytes(1, 'big')
+    if flags == 0b11111111:
         return True
     else:
         return False
 
 def check_flag_e(pkt: bytes):
-    if int.from_bytes(pkt[10], 'big'):
+    flags = pkt[10].to_bytes(1, 'big')
+    if flags == 0b11111111:
         return True
     else:
         return False
 
 def check_flag_r(pkt: bytes):
-    if int.from_bytes(pkt[10], 'big'):
+    flags = pkt[10].to_bytes(1, 'big')
+    if flags == 0b11111111:
         return True
     else:
         return False
 
 def check_flag_sync(pkt: bytes):
-    if int.from_bytes(pkt[10], 'big'):
+    flags = pkt[10].to_bytes(1, 'big')
+    if flags == 0b11111111:
         return True
     else:
         return False
 
 def check_flag_f(pkt: bytes):
-    if int.from_bytes(pkt[10], 'big'):
+    flags = pkt[10].to_bytes(1, 'big')
+    if flags == 0b11111111:
         return True
     else:
         return False
-
 
 class Segment:
     def __init__(self):
