@@ -26,7 +26,7 @@ def corrupt(pkt: bytes) -> bool:
 def get_seqNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[0:4], 'big')
 
-def get_ack_num(pkt: bytes) -> int:
+def get_ackNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[4:8], 'big')
 
 def get_head_len(pkt: bytes) -> int:
@@ -182,7 +182,7 @@ class TCP:
             if not corrupt(incoming):
                 break
             print(incoming)
-            if check_flag_ack(incoming) & get_ack_num(incoming) == 11:
+            if check_flag_ack(incoming) & get_ackNum(incoming) == 11:
                 return True
             else:
                 return False
