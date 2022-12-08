@@ -22,4 +22,5 @@ with socket(AF_INET, SOCK_DGRAM) as client_socket:
         pkt = packet.make_packet(''.encode())
         print(pkt)
         client_socket.sendto(pkt, dst_addr)
+        client_socket.connect(dst_addr)
         print('Shacked!!!!!')
