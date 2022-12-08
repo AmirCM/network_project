@@ -26,7 +26,7 @@ def corrupt(pkt: bytes) -> bool:
 def get_seqNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[0:4], 'big')
 
-def get_ack_num(pkt: bytes) -> int:
+def get_ackNum(pkt: bytes) -> int:
     return int.from_bytes(pkt[4:8], 'big')
 
 def get_head_len(pkt: bytes) -> int:
@@ -120,16 +120,16 @@ class Segment:
                       'F': 0b0,  # 1 bit flow
                       }
 
-    def set_seqNum(seq_num: int):
+    def set_seqNum(self, seq_num: int):
         self.header["seq_num"] = seq_num
 
-    def set_ack_num(ack_num: int):
+    def set_ackNum(self, ack_num: int):
         self.header["ack_num"] = ack_num
 
-    def set_head_len(head_len: int):
+    def set_head_len(self, head_len: int):
         self.header["head_len"] = head_len
 
-    def set_rec_window(rec_window: int):
+    def set_rec_window(self, rec_window: int):
         self.header["rec_window"] = rec_window
 
     def make_packet(self, data):
@@ -182,7 +182,7 @@ class TCP:
             if not corrupt(incoming):
                 break
             print(incoming)
-            if check_flag_ack(incoming) & get_ack_num(incoming) == 11:
+            if check_flag_ack(incoming) & get_ackNum(incoming) == 11:
                 return True
             else:
                 return False
