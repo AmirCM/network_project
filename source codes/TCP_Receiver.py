@@ -4,8 +4,8 @@ from socket import *  # imports socket module to enable network communication
 import numpy as np
 from TCP import *
 
-class Receiver:
 
+class Receiver:
     def __init__(self, port):
         self.sockets = socket(AF_INET, SOCK_DGRAM)  # Receiver socket
         self.sockets.bind(('', port))  # Receiver socket bind
@@ -40,15 +40,6 @@ if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as server_socket:
         server = TCP(server_socket)
         server.bind('', 12000)
+        print(server.dst_addr)
         if server.listen():
             print('Handshake complete')
-
-
-
-
-
-
-
-
-
-

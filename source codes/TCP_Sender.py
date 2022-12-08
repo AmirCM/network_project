@@ -99,19 +99,22 @@ def data_pkt_error(pkt: bytes):
 
 def hand_shake(sock: socket):
     x = 100
-    sock.setblocking(False)
+    # sock.setblocking(False)
     sender = TCP(sock)
     packet = Segment()
     packet.flags['S'] = 0b1
     packet.header['seq_num'] = x
     T = time.time()
     sender.tcp_send(packet.make_packet(''.encode()))
+    incoming = 0
     while not time_out(T):
-        incoming, addr = sender.s.recvfrom(1024)
-        if incoming:
-            break
-        print('\rWait', end='')
-    if corrupt(incoming):
+        try:
+            incoming, addr = sender.s.recv(1024)
+            if incoming:
+                break
+        except:
+            print('\rWait', end='')
+    if incoming and corrupt(incoming):
         if (x + 1) == get_ack_num(incoming) and check_flag_ack(incoming):  # Incoming AckNum = x + 1, Ack
             packet.header['ack_num'] = get_seqNum(incoming) + 1  # incoming SeqNum + 1
             packet.flags['A'] = 0b1
@@ -122,7 +125,29 @@ def hand_shake(sock: socket):
 
 if __name__ == '__main__':
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        print(hand_shake(client_socket))
+        x = 100
+        # sock.setblocking(False)
+        packet = Segment()
+
+        packet.flags['S'] = 0b1
+        packet.header['seq_num'] = x
+
+        T = time.time()
+        dst_addr = gethostname()
+        client_socket.sendto(packet.make_packet(''.encode()), (dst_addr, 12000))
+        incoming = 0
+        while not time_out(T):
+            try:
+                incoming, addr = sender.s.recv(1024)
+                if incoming:
+                    break
+            except:
+                print('\rWait', end='')
+        if incoming and corrupt(incoming):
+            if (x + 1) == get_ack_num(incoming) and check_flag_ack(incoming):  # Incoming AckNum = x + 1, Ack
+                packet.header['ack_num'] = get_seqNum(incoming) + 1  # incoming SeqNum + 1
+                packet.flags['A'] = 0b1
+                sender.tcp_send(packet.make_packet(''.encode()))
 
 
 """if False:

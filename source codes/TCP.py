@@ -80,6 +80,7 @@ def check_flag_f(pkt: bytes):
     else:
         return False
 
+
 class Segment:
     def __init__(self):
         self.header_map = [4, 1, 1, 0, 2, 2]
@@ -154,7 +155,8 @@ class TCP:
 
     def listen(self):
         while True:
-            incoming, address = self.s.recvfrom(1024)
+            incoming, self.dst_addr = self.s.recvfrom(1024)
+            print('First', incoming)
             if not corrupt(incoming):
                 break
         if check_flag_sync(incoming):
@@ -187,7 +189,7 @@ class TCP:
         return self.s.recv(l)
 
     def tcp_send(self, pkt):
-        return self.s.sendto(pkt, (gethostname(), 12000))
+        return self.s.sendto(pkt, (self.dst_addr, 12000))
 
     def accept(self) -> Tuple[socket, tuple]:
         if self.s.connect(self.dst_addr) == 0:
