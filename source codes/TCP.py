@@ -38,6 +38,17 @@ class Segment:
                       'F': 0b0,  # 1 bit flow
                       }
         self.data = None
+        
+    def reset_flags(self): 
+         self.flags = {'C': 0b0,  # 1 bit congestion
+                      'E': 0b0,  # 1 bit congestion
+                      'U': 0b0,  # 1 bit
+                      'A': 0b0,  # 1 bit Ack
+                      'P': 0b0,  # 1 bit
+                      'R': 0b0,  # 1 bit flow
+                      'S': 0b0,  # 1 bit flow
+                      'F': 0b0,  # 1 bit flow
+                      }
 
     def make_packet(self, data):
         for i, h in enumerate(self.header.values()):
