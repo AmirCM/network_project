@@ -69,8 +69,10 @@ def check_flag_r(pkt: bytes):
 
 def check_flag_sync(pkt: bytes):
     flags = (pkt[10]| 0b11111101).to_bytes(1, 'big')
+    flags = int.from_bytes(flags ,'big')
     print(flags, f'PKT: {pkt[10]}')
-    if flags == 0b11111111:
+
+    if flags == 255:
         return True
     else:
         return False
