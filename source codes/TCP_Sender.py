@@ -195,6 +195,6 @@ if __name__ == '__main__':
                 done = True
         sender.close()
     elapsed_t = time.time() - st_clock
-    with open('Data_loss.txt', 'a') as f:
-        f.write(f'p={p}, {elapsed_t}\n')
+    with open('records.txt', 'a') as f:
+        f.write(f'p={p*100//1}, {elapsed_t}\n')
     print(f"\nElapsed time: {elapsed_t}")
