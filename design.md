@@ -105,7 +105,7 @@ ___
 ___
 ![Alt text](imgs/Graph1_Phase5.jpg?raw=true "Optional Title")
 * This graph illustrates the completion time for all 5 options for transferring the same file at 0% loss/error to 70% loss/error in increments of 5%.
-* As expected, the execution time with errors related to the ACK packets had essentially no impact on the execution time, as cumulative ACKs are sent back to the sender from the receiver
+* As expected, the execution time with errors related to the ACK packets had essentially no impact on the execution time, as cumulative ACKs are sent back to the sender from the receiver. We do see an increase in execution time after 50% ACK packet related errors, likely because at such high errors, the cumulative ACKs more likely to get lost.
 * For error/loss related to data packets, the execution time grew significantly as the percentage raised, up to over 90 seconds at the 70% mark.
 
 # Plot Comparing Execution Time vs. Timeout Value
@@ -123,5 +123,7 @@ ___
 # Plot Comparing Execution Time by Project Phase for the Bit-Error Options (20%)
 ![Alt text](imgs/Graph4_Phase5.jpg?raw=true "Optional Title")
 * This graph compares the execution time of transferring an image file between project phases 3, 4 and 5, at 20% error for both the ACK and data packet options
-* We see that Phase 5 has the fastest execution time in the event of ACK errors, while Phase 3 had the fastest execution time for data packet losses. Based on this graph, phase 3 has the best performance, as the runtime in both options was very low compared to phase 4 and 5.
+* We see that Phase 5 has the fastest execution time in the event of ACK errors, while Phase 3 had the fastest execution time for data packet losses.
+* TCP performance was not as great as Phase 3 or Phase 5, but better than Phase 4.
+* Based on this graph, Phase 3 and Phase 5 are the best performers, with Phase 3 likely having a slight edge because of its consistency in execution time for both ACK and Data packet loss/errors.
 
