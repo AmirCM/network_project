@@ -4,14 +4,7 @@ from socket import *  # imports socket module to enable network communication
 import numpy as np
 from TCP import *
 
-
-def make_file(path, data):
-    with open(path, 'wb') as image:
-        for i, p in enumerate(data):
-            skip = i * 1000  # skip variable holds num
-            # ber of bytes already stored
-            image.seek(skip)  # skip over bytes already stored as packets
-            image.write(p)  # writing packets to file
+end_pointer = 4095
 
 
 class Receiver:
@@ -58,29 +51,73 @@ class Receiver:
             return True
 
 
+class App:
+    def __init__(self):
+        self.buffer = bytearray([])
+
+    def read(self, tcp_buffer: bytearray, last_byte: int):
+        self.buffer += tcp_buffer[:last_byte]
+
+    def save(self):
+        with open('img.bmp', 'wb') as image:
+            image.write(self.buffer)
+
+
+def slide(Buffer: bytearray, pointer: int) -> bytearray:
+    new = Buffer[pointer:] + bytearray([0x00] * pointer)
+    print(len(new))
+    return new
+
+
 if __name__ == '__main__':
+    application = App()
+    out_order_buffer = {}
+
+    buffer = bytearray([0x00] * 4096)
+
     r = Receiver(12000)
     r.sockets.bind(('', 12000))
-    window = ['' for _ in range(819)]
-    if r.listen():
 
+    buffer_pointer = 0
+    next_AckNum = 0
+
+    remaining_buffer_size = end_pointer - buffer_pointer + 1
+    if r.listen():
         seg = Segment()
         while True:
-
             if r.rdt_rcv():
-                seqNum = get_seqNum(r.recv_pkt) // 1000
-                data = r.extract()
-                print(len(data))
-                if not window[seqNum]:
+                if check_flag_f(r.recv_pkt):
                     seg.reset_flags()
-                    window[seqNum] = data
-                    seg.set_ackNum((seqNum + 1) * 1000)
                     seg.flags['A'] = 0b1
+                    seg.flags['F'] = 0b1
                     r.sockets.send(seg.make_packet(''.encode()))
-                    if seqNum == 818:
-                        break
+                    break
 
+                seqNum = get_seqNum(r.recv_pkt)
+                if seqNum == next_AckNum:
+                    data = r.extract()
+                    buffer[buffer_pointer:] = data
+                    buffer_pointer += len(data)
+                    next_AckNum += len(data)
+                    while next_AckNum in out_order_buffer:
+                        buffer_pointer += out_order_buffer[next_AckNum]
+                        next_AckNum += out_order_buffer.pop(next_AckNum)
+
+                    application.read(buffer, buffer_pointer)
+                    buffer = slide(buffer, buffer_pointer)
+                    remaining_buffer_size = buffer_pointer
+                    buffer_pointer = 0
+                elif seqNum < next_AckNum + remaining_buffer_size:
+                    data = r.extract()
+                    loc = seqNum - next_AckNum
+                    buffer[buffer_pointer + loc:] = data
+                    out_order_buffer[buffer_pointer + loc] = len(data)
+                    remaining_buffer_size = end_pointer - (buffer_pointer + loc + len(data)) + 1
+
+                seg.reset_flags()
+                seg.set_ackNum(next_AckNum)
+                seg.flags['A'] = 0b1
+                seg.set_rec_window(remaining_buffer_size)
+                r.sockets.send(seg.make_packet(''.encode()))
             else:
                 r.sockets.send(seg.make_packet(''.encode()))
-
-    make_file('img.bmp', window)

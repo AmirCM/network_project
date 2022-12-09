@@ -7,7 +7,7 @@ from TCP import *
 option3_error = 0.00
 option4_error = 0.00
 timeout = 30 / 1000
-end_buff = 0
+end_buff = 818000
 
 
 def checksum(data):
@@ -78,6 +78,20 @@ class Sender:
         # self.sockets.sendto(data, (self.destination, self.port))
         self.sockets.send(data)
 
+
+    def close(self):
+        seg = Segment()
+        seg.flags['F'] = 0b1
+        self.sockets.send(seg.make_packet(''.encode()))
+        timeout = 0.5
+        T = time.time()
+        while True:
+            if time_out(T):
+                break
+            if self.rdt_rcv():
+                if check_flag_f(self.rcvpkt):
+                    break
+
     def handShake(self):
         x = 100
         seg = Segment()
@@ -113,7 +127,7 @@ if __name__ == '__main__':
     p = Packet(image)
     p.make_packet()  # creates all packets to send to server with all headers
     print(len(p.packets))
-    N = 3
+    N = 1 # 4096
     MSS = 1000
     # N = args.N
     print(f'**** GB{N} ****')
@@ -129,20 +143,21 @@ if __name__ == '__main__':
         done = False
         base = 0
         nextseqnum = 0
+        rec_window = 4096
         rtt_time = 0.30
         dev_rtt = 0
         stamp_time = 0
         while not done:
             print(f'\n\rseq: {nextseqnum}, Base: {base}, \t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',
-                end='')
+                  end='')
             if rtt_time > 0.01:
                 timeout = rtt_time + dev_rtt * 4
 
-            if nextseqnum < base + N*MSS:
+            if nextseqnum < base + rec_window:
                 seg = Segment()
                 seg.set_seqNum(nextseqnum)
                 seg.set_head_len(15)
-                sender.rdt_send(seg.make_packet(p.packets[nextseqnum//1000]))
+                sender.rdt_send(seg.make_packet(p.packets[nextseqnum // 1000]))
                 stamp_time = time.time()
                 if base == nextseqnum:
                     T = time.time()  # Start Timer
@@ -154,7 +169,7 @@ if __name__ == '__main__':
                     seg = Segment()
                     seg.set_seqNum(i)
                     seg.set_head_len(15)
-                    sender.rdt_send(seg.make_packet(p.packets[i//1000]))
+                    sender.rdt_send(seg.make_packet(p.packets[i // 1000]))
 
             if sender.rdt_rcv():
                 rtt = time.time() - stamp_time
@@ -162,9 +177,11 @@ if __name__ == '__main__':
                 dev_rtt = dev_rtt * 0.75 + np.abs(rtt - rtt_time) * 0.25
 
                 base = get_ackNum(sender.rcvpkt)
+                rec_window = get_rec_window(sender.rcvpkt)
                 if base != nextseqnum:
                     T = time.time()  # Reset Timer
 
-
-
+            if base//1000 == 818:
+                done = True
+        sender.close()
     print(f"\nElapsed time: {time.time() - st_clock}")
