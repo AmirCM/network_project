@@ -3,6 +3,7 @@ import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
 from TCP import *
+import io
 
 end_pointer = 4095
 
@@ -54,14 +55,20 @@ class Receiver:
 
 class App:
     def __init__(self):
-        self.buffer = bytearray([])
+        self.buffer = []
 
     def read(self, tcp_buffer: bytearray, last_byte: int):
-        self.buffer += tcp_buffer[:last_byte]
+        data = tcp_buffer[:last_byte]
+        self.buffer.append(data)
 
     def save(self):
+        print(len(self.buffer))
         with open('img.bmp', 'wb') as image:
-            image.write(self.buffer)
+            for i, p in enumerate(self.buffer):
+                print(type(p))
+                skip = i * 1000
+                image.seek(skip)
+                image.write(p)
 
 
 def slide(Buffer: bytearray, pointer: int) -> bytearray:
@@ -96,7 +103,7 @@ if __name__ == '__main__':
                 seqNum = get_seqNum(r.recv_pkt)
                 if seqNum == next_AckNum:
                     data = r.extract()
-                    buffer[buffer_pointer:buffer_pointer+len(data)] = data
+                    buffer[buffer_pointer:buffer_pointer + len(data)] = data
                     buffer_pointer += len(data)
                     next_AckNum += len(data)
                     print(len(data))
@@ -109,6 +116,7 @@ if __name__ == '__main__':
                     remaining_buffer_size = buffer_pointer
                     buffer_pointer = 0
                 elif seqNum < next_AckNum + remaining_buffer_size:
+                    print('OUT OF ORDER')
                     data = r.extract()
                     loc = seqNum - next_AckNum
                     buffer[buffer_pointer + loc:] = data

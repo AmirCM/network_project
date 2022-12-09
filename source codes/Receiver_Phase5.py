@@ -26,6 +26,7 @@ def checksum(data):
 
 
 def make_file(path, data):
+    print(len(data))
     with open(path, 'wb') as image:
         for i, p in enumerate(data):
             skip = i * 1024  # skip variable holds num

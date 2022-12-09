@@ -29,6 +29,7 @@ class Packet:
 
     def make_packet(self):
         i = 0  # initialize loop variable
+
         while True:
             skip = i * 1000  # skip variable holds number of bytes already stored
             self.data.seek(skip)  # skip over bytes already stored as packets
@@ -182,7 +183,7 @@ if __name__ == '__main__':
                     T = time.time()  # Reset Timer
 
 
-            if base // 1000 == 818:
+            if nextseqnum // 1000 == 819:
                 done = True
         sender.close()
     print(f"\nElapsed time: {time.time() - st_clock}")

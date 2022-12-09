@@ -158,6 +158,7 @@ class Segment:
                 chunck += h.to_bytes(1, 'big')
 
         ch = checksum(chunck[:-2] + data)
+        print('Data', len(data), end='')
         return chunck[:-2] + ch + data
 
 
