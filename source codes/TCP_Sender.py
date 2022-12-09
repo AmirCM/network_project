@@ -127,9 +127,8 @@ class Sender:
 
 if __name__ == '__main__':
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
-    p = Packet(image)
-    p.make_packet()  # creates all packets to send to server with all headers
-    print(len(p.packets))
+    image = bytearray(image.read())
+    print(len(image))
     N = 1  # 4096
     MSS = 1000
     # N = args.N
@@ -161,7 +160,7 @@ if __name__ == '__main__':
                 seg = Segment()
                 seg.set_seqNum(nextseqnum)
                 seg.set_head_len(15)
-                sender.rdt_send(seg.make_packet(p.packets[nextseqnum // 1000]))
+                sender.rdt_send(seg.make_packet(image[nextseqnum:nextseqnum+cwnd]))
                 stamp_time = time.time()
                 if base == nextseqnum:
                     T = time.time()  # Start Timer
@@ -170,14 +169,15 @@ if __name__ == '__main__':
 
             if time_out(T):
                 T = time.time()  # Reset Timer
+                dup_ACKcount = 0
+                cwnd = MSS
                 for i in range(base, min(nextseqnum, end_buff), cwnd):
                     seg = Segment()
                     seg.set_seqNum(i)
                     seg.set_head_len(15)
-                    sender.rdt_send(seg.make_packet(p.packets[i // 1000]))
+                    sender.rdt_send(seg.make_packet(image[i:cwnd]))
                 stamp_time = time.time()
-                dup_ACKcount = 0
-                cwnd = MSS
+
 
             if sender.rdt_rcv():
                 rtt = time.time() - stamp_time
@@ -192,8 +192,9 @@ if __name__ == '__main__':
                     cwnd += MSS
                     base = ackNum
                 rec_window = get_rec_window(sender.rcvpkt)
-                if base != nextseqnum:
-                    T = time.time()  # Reset Timer
+                """if base != nextseqnum:
+                    print('RESET')
+                    T = time.time()  # Reset Timer"""
 
             print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t T: {rtt_time * 1000 // 1}ms, timeout: {timeout * 1000 // 1}ms',
                 end='')

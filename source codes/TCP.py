@@ -157,7 +157,7 @@ class Segment:
                     h = h << 1 | f
                 chunck += h.to_bytes(1, 'big')
 
-        ch = checksum(chunck[:-2] + data)
+            ch = checksum(chunck[:-2] + data)
         return chunck[:-2] + ch + data
 
 

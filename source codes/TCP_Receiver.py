@@ -5,7 +5,7 @@ import numpy as np
 from TCP import *
 import io
 
-end_pointer = 65000
+end_pointer = 4095
 
 
 class Receiver:
@@ -17,7 +17,9 @@ class Receiver:
         self.loss_probability = loss_probability
 
     def rdt_rcv(self) -> bool:
-        self.recv_pkt, self.dst_addr = self.sockets.recvfrom(1024)
+        self.recv_pkt = self.sockets.recv(4095)
+        if len(self.recv_pkt) > 1000:
+            print(len(self.recv_pkt))
         if np.random.binomial(1, self.loss_probability):
             return False
         if not corrupt(self.recv_pkt) and self.recv_pkt:
@@ -73,7 +75,7 @@ class App:
 
 def slide(Buffer: bytearray, pointer: int) -> bytearray:
     new = Buffer[pointer:] + bytearray([0x00] * pointer)
-    print(f'\t NEW: {len(Buffer[pointer:])} {len(new)}, {pointer}')
+    # print(f'\t NEW: {len(Buffer[pointer:])} {len(new)}, {pointer}')
     return new
 
 
@@ -83,7 +85,7 @@ if __name__ == '__main__':
 
     buffer = bytearray([0x00] * end_pointer)
 
-    r = Receiver(12000, 0.8)
+    r = Receiver(12000, 0.4)
     r.sockets.bind(('', 12000))
 
     buffer_pointer = 0
@@ -102,8 +104,9 @@ if __name__ == '__main__':
                     break
 
                 seqNum = get_seqNum(r.recv_pkt)
+                data = r.extract()
+                # print(f'{len(data)}')
                 if seqNum == next_AckNum:
-                    data = r.extract()
                     buffer[buffer_pointer:buffer_pointer + len(data)] = data
                     buffer_pointer += len(data)
                     next_AckNum += len(data)
@@ -116,14 +119,12 @@ if __name__ == '__main__':
                     buffer = slide(buffer, buffer_pointer)
                     remaining_buffer_size = buffer_pointer
                     buffer_pointer = 0
-                elif seqNum < next_AckNum + remaining_buffer_size:
-
-                    data = r.extract()
+                elif (seqNum < next_AckNum + remaining_buffer_size - len(data)) and seqNum > next_AckNum:
                     loc = seqNum - next_AckNum
                     buffer[buffer_pointer + loc:len(data)] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
                     remaining_buffer_size = end_pointer - (buffer_pointer + loc + len(data)) + 1
-                    print('OUT of ORDER')
+                    print(f'OUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {loc}, {seqNum}, {next_AckNum}, {len(data)}')
 
                 seg.reset_flags()
                 seg.set_ackNum(next_AckNum)
@@ -139,6 +140,6 @@ if __name__ == '__main__':
 
             else:
                 if seg.flags['A'] == 0b1:
-                    print('\rDouble ACK', end='')
+                    #print('\rDouble ACK', end='')
                     r.sockets.send(seg.make_packet(''.encode()))
         application.save()
