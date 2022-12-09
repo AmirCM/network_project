@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
     buffer = bytearray([0x00] * end_pointer)
 
-    r = Receiver(12000, 0.5)
+    r = Receiver(12000, 0)
     r.sockets.bind(('', 12000))
 
     buffer_pointer = 0

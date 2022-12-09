@@ -53,26 +53,24 @@ def time_out(t):
 
 
 class Sender:
-    def __init__(self, port: int, destination, sockets: socket):
+    def __init__(self, port: int, destination, sockets: socket, loss_probability):
         self.rcvpkt = None
         self.port = port  # server port number
         self.destination = destination  # server name
         self.sockets = sockets  # client socket
         self.packets = []  # packet array
+        self.loss_probability = loss_probability
 
     def rdt_rcv(self):
         try:
             self.rcvpkt = self.sockets.recv(20)  # 2 seq, 2  ch thus 7 Bytes
             if corrupt(self.rcvpkt):
                 return False
-            if np.random.binomial(1, option4_error):
+            if np.random.binomial(1, self.loss_probability):
                 self.rcvpkt = None
+                return False
         except BlockingIOError as e:
             return False
-
-        if self.rcvpkt:
-            return True
-        return False
 
     def rdt_send(self, data):
         # self.sockets.sendto(data, (self.destination, self.port))
@@ -128,20 +126,16 @@ if __name__ == '__main__':
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
     image = bytearray(image.read())
     print(len(image))
-    N = 1  # 4096
+
     MSS = 1000
-    # N = args.N
-    print(f'**** GB{N} ****')
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        sender = Sender(12000, gethostname(), client_socket)
+        sender = Sender(12000, gethostname(), client_socket, 0.1)
         client_socket.setblocking(False)
         sender.handShake()
 
         T = 0
         st_clock = time.time()
 
-
-        sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
         done = False
         base = 0
         nextseqnum = 0
