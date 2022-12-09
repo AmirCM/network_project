@@ -66,7 +66,6 @@ class Sender:
                 return False
             if np.random.binomial(1, option4_error):
                 self.rcvpkt = None
-            # print(self.getAck())
         except BlockingIOError as e:
             return False
 
@@ -154,19 +153,22 @@ if __name__ == '__main__':
             if nextseqnum < base + rec_window:
                 seg = Segment()
                 seg.set_seqNum(nextseqnum)
-                seg.set_head_len(15)
+                seg.set_head_len(17)
                 sender.rdt_send(seg.make_packet(p.packets[nextseqnum // 1000]))
                 stamp_time = time.time()
                 if base == nextseqnum:
                     T = time.time()  # Start Timer
                 nextseqnum += MSS
+                print(
+                    f'\n\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}\t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',
+                    end='')
 
             if time_out(T):
                 T = time.time()  # Reset Timer
                 for i in range(base, min(nextseqnum, end_buff), MSS):
                     seg = Segment()
                     seg.set_seqNum(i)
-                    seg.set_head_len(15)
+                    seg.set_head_len(17)
                     sender.rdt_send(seg.make_packet(p.packets[i // 1000]))
 
             if sender.rdt_rcv():
@@ -179,8 +181,7 @@ if __name__ == '__main__':
                 if base != nextseqnum:
                     T = time.time()  # Reset Timer
 
-                print(f'\n\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}\t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',end='')
-                # print(sender.rcvpkt)
+
             if base // 1000 == 818:
                 done = True
         sender.close()

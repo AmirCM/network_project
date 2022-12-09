@@ -37,7 +37,6 @@ def get_head_len(pkt: bytes) -> int:
 
 
 def get_rec_window(pkt: bytearray) -> int:
-    print(pkt[:15])
     return int.from_bytes(pkt[11:13], 'big')
 
 
@@ -148,7 +147,6 @@ class Segment:
     def make_packet(self, data):
         for i, h in enumerate(self.header.values()):
             if self.header_map[i] != 0:
-                print(i, h, self.header_map[i])
                 if i == 0:
                     chunck = h.to_bytes(self.header_map[i], 'big')
                 else:

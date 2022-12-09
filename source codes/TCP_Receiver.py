@@ -22,6 +22,7 @@ class Receiver:
 
     def extract(self):
         pkt_len = get_head_len(self.recv_pkt)
+        print(pkt_len, len(self.recv_pkt))
         return self.recv_pkt[pkt_len:]
 
     def listen(self):
@@ -93,12 +94,12 @@ if __name__ == '__main__':
                     break
 
                 seqNum = get_seqNum(r.recv_pkt)
-                print(seqNum)
                 if seqNum == next_AckNum:
                     data = r.extract()
                     buffer[buffer_pointer:buffer_pointer+len(data)] = data
                     buffer_pointer += len(data)
                     next_AckNum += len(data)
+                    print(len(data))
                     while next_AckNum in out_order_buffer:
                         buffer_pointer += out_order_buffer[next_AckNum]
                         next_AckNum += out_order_buffer.pop(next_AckNum)
@@ -113,13 +114,15 @@ if __name__ == '__main__':
                     buffer[buffer_pointer + loc:] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
                     remaining_buffer_size = end_pointer - (buffer_pointer + loc + len(data)) + 1
-                print(f'NA:{next_AckNum}')
+
                 seg.reset_flags()
                 seg.set_ackNum(next_AckNum)
                 seg.flags['A'] = 0b1
                 seg.set_rec_window(remaining_buffer_size)
+                seg.set_head_len(17)
                 pkt = seg.make_packet(''.encode())
                 # print(f'window size = {pkt}')
+                print(f'NA:{next_AckNum}')
                 r.sockets.send(pkt)
             else:
                 print('Blaaa')
