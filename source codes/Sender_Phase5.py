@@ -5,7 +5,7 @@ import argparse
 
 option3_error = 0.00
 option4_error = 0.00
-timeout = 50 / 1000
+timeout = 10 / 1000
 end_buff = 0
 
 def checksum(data):
