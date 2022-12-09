@@ -5,7 +5,7 @@ import numpy as np
 from TCP import *
 import argparse
 
-end_pointer = 40095
+end_pointer = 4095
 
 
 class Receiver:
