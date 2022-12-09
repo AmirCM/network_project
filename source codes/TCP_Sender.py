@@ -78,7 +78,6 @@ class Sender:
         # self.sockets.sendto(data, (self.destination, self.port))
         self.sockets.send(data)
 
-
     def close(self):
         seg = Segment()
         seg.flags['F'] = 0b1
@@ -127,7 +126,7 @@ if __name__ == '__main__':
     p = Packet(image)
     p.make_packet()  # creates all packets to send to server with all headers
     print(len(p.packets))
-    N = 1 # 4096
+    N = 1  # 4096
     MSS = 1000
     # N = args.N
     print(f'**** GB{N} ****')
@@ -148,8 +147,7 @@ if __name__ == '__main__':
         dev_rtt = 0
         stamp_time = 0
         while not done:
-            print(f'\n\rseq: {nextseqnum}, Base: {base}, \t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',
-                  end='')
+
             if rtt_time > 0.01:
                 timeout = rtt_time + dev_rtt * 4
 
@@ -181,7 +179,9 @@ if __name__ == '__main__':
                 if base != nextseqnum:
                     T = time.time()  # Reset Timer
 
-            if base//1000 == 818:
+                print(f'\n\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}\t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',end='')
+                # print(sender.rcvpkt)
+            if base // 1000 == 818:
                 done = True
         sender.close()
     print(f"\nElapsed time: {time.time() - st_clock}")

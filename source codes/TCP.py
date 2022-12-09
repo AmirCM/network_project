@@ -36,7 +36,8 @@ def get_head_len(pkt: bytes) -> int:
     return int.from_bytes(pkt[8:9], 'big')
 
 
-def get_rec_window(pkt: bytes) -> int:
+def get_rec_window(pkt: bytearray) -> int:
+    print(pkt[:15])
     return int.from_bytes(pkt[11:13], 'big')
 
 
@@ -106,6 +107,7 @@ class Segment:
             'ack_num': 0,  # Next expected 4B
             'head_len': 0,  # 1B
             'empty': 0,  # 1B
+            'flags':0,   # 1B
             'rec_window': 0,  # 2B rec window remaining size
             'checksum': 0,  # 2B
         }
@@ -146,6 +148,7 @@ class Segment:
     def make_packet(self, data):
         for i, h in enumerate(self.header.values()):
             if self.header_map[i] != 0:
+                print(i, h, self.header_map[i])
                 if i == 0:
                     chunck = h.to_bytes(self.header_map[i], 'big')
                 else:
@@ -215,14 +218,8 @@ class TCP:
 
 if __name__ == '__main__':
     s = Segment()
-    print(s.make_packet('HI'.encode()))
-    """with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        server = TCP(client_socket)
-        server.bind('', 12000)
-        server.listen()
-        conn, addr = server.accept()
-        while True:
-            data = conn.recv(1024)
-            if not data:
-                break
-            conn.sendall(data)"""
+    s.set_rec_window(1000)
+    s.set_seqNum(2000)
+    s.set_ackNum(2000)
+    print(s.make_packet(''.encode()))
+

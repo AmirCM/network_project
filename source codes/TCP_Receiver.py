@@ -65,7 +65,6 @@ class App:
 
 def slide(Buffer: bytearray, pointer: int) -> bytearray:
     new = Buffer[pointer:] + bytearray([0x00] * pointer)
-    print(len(new))
     return new
 
 
@@ -94,9 +93,10 @@ if __name__ == '__main__':
                     break
 
                 seqNum = get_seqNum(r.recv_pkt)
+                print(seqNum)
                 if seqNum == next_AckNum:
                     data = r.extract()
-                    buffer[buffer_pointer:] = data
+                    buffer[buffer_pointer:buffer_pointer+len(data)] = data
                     buffer_pointer += len(data)
                     next_AckNum += len(data)
                     while next_AckNum in out_order_buffer:
@@ -113,11 +113,15 @@ if __name__ == '__main__':
                     buffer[buffer_pointer + loc:] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
                     remaining_buffer_size = end_pointer - (buffer_pointer + loc + len(data)) + 1
-
+                print(f'NA:{next_AckNum}')
                 seg.reset_flags()
                 seg.set_ackNum(next_AckNum)
                 seg.flags['A'] = 0b1
                 seg.set_rec_window(remaining_buffer_size)
-                r.sockets.send(seg.make_packet(''.encode()))
+                pkt = seg.make_packet(''.encode())
+                # print(f'window size = {pkt}')
+                r.sockets.send(pkt)
             else:
+                print('Blaaa')
                 r.sockets.send(seg.make_packet(''.encode()))
+        application.save()
