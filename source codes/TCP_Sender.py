@@ -168,7 +168,6 @@ if __name__ == '__main__':
                     T = time.time()  # Start Timer
                 nextseqnum += cwnd
 
-
             if time_out(T):
                 T = time.time()  # Reset Timer
                 dup_ACKcount = 0
@@ -187,10 +186,7 @@ if __name__ == '__main__':
                 dev_rtt = dev_rtt * 0.75 + np.abs(rtt - rtt_time) * 0.25
 
                 ackNum = get_ackNum(sender.rcvpkt)
-                if ackNum == base:
-                    dup_ACKcount += 1
-                else:
-                    dup_ACKcount = 0
+                if ackNum != base:
                     cwnd += MSS
                     base = ackNum
                     T = time.time()

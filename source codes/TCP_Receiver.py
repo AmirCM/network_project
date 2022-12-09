@@ -67,7 +67,6 @@ class App:
         self.buffer.append(data)
 
     def save(self):
-        print(self.buffer)
         with open('img.bmp', 'wb') as image:
             for i, p in enumerate(self.buffer):
                 skip = i * 1000
@@ -87,7 +86,7 @@ if __name__ == '__main__':
 
     buffer = bytearray([0x00] * end_pointer)
 
-    r = Receiver(12000, 0)
+    r = Receiver(12000, 0.5)
     r.sockets.bind(('', 12000))
 
     buffer_pointer = 0
@@ -107,8 +106,8 @@ if __name__ == '__main__':
 
                 seqNum = get_seqNum(r.recv_pkt)
                 data = r.extract()
-                # print(f'{len(data)}')
-                if seqNum == next_AckNum:
+
+                if seqNum == next_AckNum and len(data) <= remaining_buffer_size:
                     buffer[buffer_pointer:buffer_pointer + len(data)] = data
                     buffer_pointer += len(data)
                     next_AckNum += len(data)
@@ -121,7 +120,9 @@ if __name__ == '__main__':
                     buffer = slide(buffer, buffer_pointer)
                     remaining_buffer_size = buffer_pointer
                     buffer_pointer = 0
-                elif (seqNum < next_AckNum + remaining_buffer_size - len(data)) and seqNum > next_AckNum and seqNum not in out_order_buffer:
+                elif (len(data) <= remaining_buffer_size) and \
+                        (seqNum > next_AckNum) and \
+                        (seqNum not in out_order_buffer):
                     loc = seqNum - next_AckNum
                     buffer[buffer_pointer + loc:len(data)] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
@@ -139,9 +140,9 @@ if __name__ == '__main__':
                 except:
                     print(f'\rNA:{seg.header}', end='')
                     input('?')
-
+                print(f'\rNA:{next_AckNum}, {seqNum}', end='')
             else:
                 if seg.flags['A'] == 0b1:
-                    #print('\rDouble ACK', end='')
+                    print(f'\tDA:{next_AckNum}', end='')
                     r.sockets.send(seg.make_packet(''.encode()))
         application.save()
