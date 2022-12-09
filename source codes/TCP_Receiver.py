@@ -119,7 +119,7 @@ if __name__ == '__main__':
                 seg.set_ackNum(next_AckNum)
                 seg.flags['A'] = 0b1
                 seg.set_rec_window(remaining_buffer_size)
-                seg.set_head_len(17)
+                seg.set_head_len(15)
                 pkt = seg.make_packet(''.encode())
                 # print(f'window size = {pkt}')
                 print(f'NA:{next_AckNum}')

@@ -157,8 +157,8 @@ class Segment:
                     h = h << 1 | f
                 chunck += h.to_bytes(1, 'big')
 
-        ch = checksum(chunck + data)
-        return chunck + ch + data
+        ch = checksum(chunck[:-2] + data)
+        return chunck[:-2] + ch + data
 
 
 class TCP:
@@ -216,8 +216,9 @@ class TCP:
 
 if __name__ == '__main__':
     s = Segment()
+    print(sum(s.header_map))
     s.set_rec_window(1000)
     s.set_seqNum(2000)
     s.set_ackNum(2000)
-    print(s.make_packet(''.encode()))
+    print(len(s.make_packet(bytearray([0xFF]))))
 
