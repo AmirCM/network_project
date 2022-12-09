@@ -5,7 +5,7 @@ import numpy as np
 from TCP import *
 import io
 
-end_pointer = 4095
+end_pointer = 40095
 
 
 class Receiver:
@@ -107,7 +107,7 @@ if __name__ == '__main__':
                 seqNum = get_seqNum(r.recv_pkt)
                 data = r.extract()
 
-                if seqNum == next_AckNum and len(data) <= remaining_buffer_size:
+                if seqNum == next_AckNum and (len(data) <= remaining_buffer_size or len(data) <= 1000):
                     buffer[buffer_pointer:buffer_pointer + len(data)] = data
                     buffer_pointer += len(data)
                     next_AckNum += len(data)
@@ -120,15 +120,13 @@ if __name__ == '__main__':
                     buffer = slide(buffer, buffer_pointer)
                     remaining_buffer_size = buffer_pointer
                     buffer_pointer = 0
-                elif (len(data) <= remaining_buffer_size) and \
-                        (seqNum > next_AckNum) and \
-                        (seqNum not in out_order_buffer):
+                elif len(data) <= remaining_buffer_size and (len(data) + seqNum - next_AckNum) < remaining_buffer_size and seqNum > next_AckNum:
+                    print(
+                        f'\n\rOUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {seqNum}, {next_AckNum}, {len(data)}')
                     loc = seqNum - next_AckNum
                     buffer[buffer_pointer + loc:len(data)] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
                     remaining_buffer_size = end_pointer - (buffer_pointer + loc + len(data)) + 1
-                    print(f'OUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {loc}, {seqNum}, {next_AckNum}, {len(data)}')
-
                 seg.reset_flags()
                 seg.set_ackNum(next_AckNum)
                 seg.flags['A'] = 0b1
@@ -140,7 +138,7 @@ if __name__ == '__main__':
                 except:
                     print(f'\rNA:{seg.header}', end='')
                     input('?')
-                print(f'\rNA:{next_AckNum}, {seqNum}', end='')
+                print(f'\rnextAck:{next_AckNum}, Seq:{seqNum}', end='')
             else:
                 if seg.flags['A'] == 0b1:
                     print(f'\tDA:{next_AckNum}', end='')
