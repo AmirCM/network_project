@@ -69,6 +69,7 @@ class Sender:
             if np.random.binomial(1, self.loss_probability):
                 self.rcvpkt = None
                 return False
+            return True
         except BlockingIOError as e:
             return False
 
@@ -126,10 +127,15 @@ if __name__ == '__main__':
     image = open('../imgs/select_me.bmp', 'rb')  # opens bitmap file
     image = bytearray(image.read())
     print(len(image))
-
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('-p', type=float, required=False)
+    args = arg_parser.parse_args()
+    p = 0
+    if args.p:
+        p = args.p
     MSS = 1000
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
-        sender = Sender(12000, gethostname(), client_socket, 0.1)
+        sender = Sender(12000, gethostname(), client_socket, p)
         client_socket.setblocking(False)
         sender.handShake()
 
@@ -146,9 +152,8 @@ if __name__ == '__main__':
         dup_ACKcount = 0
         cwnd = MSS
         while not done:
-            print(
-                f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t, timeout: {timeout * 1000 // 1}ms',
-                end='')
+            #print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t, timeout: {timeout * 1000 // 1}ms',
+            #    end='')
             if rtt_time > 0.005:
                 timeout = rtt_time + dev_rtt * 4
 
@@ -186,7 +191,7 @@ if __name__ == '__main__':
                     T = time.time()
                 rec_window = get_rec_window(sender.rcvpkt)
 
-                print(f'\tackNum{ackNum}', end='')
+                print(f'\r\tackNum{ackNum}', end='')
 
             if base == 818058:
                 done = True

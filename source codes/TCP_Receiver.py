@@ -3,7 +3,7 @@ import time
 from socket import *  # imports socket module to enable network communication
 import numpy as np
 from TCP import *
-import io
+import argparse
 
 end_pointer = 40095
 
@@ -83,10 +83,16 @@ def slide(Buffer: bytearray, pointer: int) -> bytearray:
 if __name__ == '__main__':
     application = App()
     out_order_buffer = {}
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('-p', type=float, required=False)
+    args = arg_parser.parse_args()
+    p = 0
+    if args.p:
+        p = args.p
 
     buffer = bytearray([0x00] * end_pointer)
 
-    r = Receiver(12000, 0)
+    r = Receiver(12000, p)
     r.sockets.bind(('', 12000))
 
     buffer_pointer = 0
@@ -120,7 +126,8 @@ if __name__ == '__main__':
                     buffer = slide(buffer, buffer_pointer)
                     remaining_buffer_size = buffer_pointer
                     buffer_pointer = 0
-                elif len(data) <= remaining_buffer_size and (len(data) + seqNum - next_AckNum) < remaining_buffer_size and seqNum > next_AckNum:
+                elif len(data) <= remaining_buffer_size and (
+                        len(data) + seqNum - next_AckNum) < remaining_buffer_size and seqNum > next_AckNum:
                     print(
                         f'\n\rOUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {seqNum}, {next_AckNum}, {len(data)}')
                     loc = seqNum - next_AckNum
@@ -133,12 +140,12 @@ if __name__ == '__main__':
                 seg.set_rec_window(remaining_buffer_size)
                 seg.set_head_len(15)
                 try:
-                    pkt = seg.make_packet(''.encode())
-                    r.sockets.send(pkt)
+                    r.sockets.send(seg.make_packet(''.encode()))
+                    print(f'\rnextAck:{next_AckNum}, Seq:{seqNum}', end='')
                 except:
                     print(f'\rNA:{seg.header}', end='')
                     input('?')
-                print(f'\rnextAck:{next_AckNum}, Seq:{seqNum}', end='')
+
             else:
                 if seg.flags['A'] == 0b1:
                     print(f'\tDA:{next_AckNum}', end='')
