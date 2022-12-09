@@ -5,7 +5,7 @@ import numpy as np
 from TCP import *
 import argparse
 
-end_pointer = 4095
+end_pointer = 60095
 
 
 class Receiver:
@@ -18,7 +18,7 @@ class Receiver:
 
     def rdt_rcv(self) -> bool:
         try:
-            self.recv_pkt = self.sockets.recv(4095)
+            self.recv_pkt = self.sockets.recv(60095)
         except:
             return False
         if np.random.binomial(1, self.loss_probability):

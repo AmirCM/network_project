@@ -152,9 +152,9 @@ if __name__ == '__main__':
         dup_ACKcount = 0
         cwnd = MSS
         while not done:
-            #print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t, timeout: {timeout * 1000 // 1}ms',
-            #    end='')
-            if rtt_time > 0.005:
+            print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t, timeout: {timeout * 1000 // 1}ms',
+                end='')
+            if rtt_time > 0.001:
                 timeout = rtt_time + dev_rtt * 4
 
             if nextseqnum < base + rec_window:
