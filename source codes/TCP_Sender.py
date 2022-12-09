@@ -48,7 +48,6 @@ class Packet:
 def time_out(t):
     global timeout
     if time.time() - t > timeout:
-        # print('\t #######  TIME OUT #######' )
         return True
     return False
 
@@ -153,6 +152,9 @@ if __name__ == '__main__':
         dup_ACKcount = 0
         cwnd = MSS
         while not done:
+            print(
+                f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t, timeout: {timeout * 1000 // 1}ms',
+                end='')
             if rtt_time > 0.005:
                 timeout = rtt_time + dev_rtt * 4
 
@@ -175,7 +177,7 @@ if __name__ == '__main__':
                     seg = Segment()
                     seg.set_seqNum(i)
                     seg.set_head_len(15)
-                    sender.rdt_send(seg.make_packet(image[i:cwnd]))
+                    sender.rdt_send(seg.make_packet(image[i:i + cwnd]))
                 stamp_time = time.time()
 
 
@@ -191,13 +193,11 @@ if __name__ == '__main__':
                     dup_ACKcount = 0
                     cwnd += MSS
                     base = ackNum
+                    T = time.time()
                 rec_window = get_rec_window(sender.rcvpkt)
-                """if base != nextseqnum:
-                    print('RESET')
-                    T = time.time()  # Reset Timer"""
 
-            print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t T: {rtt_time * 1000 // 1}ms, timeout: {timeout * 1000 // 1}ms',
-                end='')
+                print(f'\tackNum{ackNum}', end='')
+
             if base == 818058:
                 done = True
         sender.close()

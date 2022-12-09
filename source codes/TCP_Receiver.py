@@ -17,9 +17,10 @@ class Receiver:
         self.loss_probability = loss_probability
 
     def rdt_rcv(self) -> bool:
-        self.recv_pkt = self.sockets.recv(4095)
-        if len(self.recv_pkt) > 1000:
-            print(len(self.recv_pkt))
+        try:
+            self.recv_pkt = self.sockets.recv(4095)
+        except:
+            return False
         if np.random.binomial(1, self.loss_probability):
             return False
         if not corrupt(self.recv_pkt) and self.recv_pkt:
@@ -66,6 +67,7 @@ class App:
         self.buffer.append(data)
 
     def save(self):
+        print(self.buffer)
         with open('img.bmp', 'wb') as image:
             for i, p in enumerate(self.buffer):
                 skip = i * 1000
@@ -85,7 +87,7 @@ if __name__ == '__main__':
 
     buffer = bytearray([0x00] * end_pointer)
 
-    r = Receiver(12000, 0.4)
+    r = Receiver(12000, 0)
     r.sockets.bind(('', 12000))
 
     buffer_pointer = 0
@@ -119,7 +121,7 @@ if __name__ == '__main__':
                     buffer = slide(buffer, buffer_pointer)
                     remaining_buffer_size = buffer_pointer
                     buffer_pointer = 0
-                elif (seqNum < next_AckNum + remaining_buffer_size - len(data)) and seqNum > next_AckNum:
+                elif (seqNum < next_AckNum + remaining_buffer_size - len(data)) and seqNum > next_AckNum and seqNum not in out_order_buffer:
                     loc = seqNum - next_AckNum
                     buffer[buffer_pointer + loc:len(data)] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
