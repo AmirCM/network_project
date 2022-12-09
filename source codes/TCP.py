@@ -158,7 +158,6 @@ class Segment:
                 chunck += h.to_bytes(1, 'big')
 
         ch = checksum(chunck[:-2] + data)
-        print('Data', len(data), end='')
         return chunck[:-2] + ch + data
 
 
@@ -176,11 +175,11 @@ class TCP:
     def listen(self):
         while True:
             incoming, self.dst_addr = self.s.recvfrom(1024)
-            print('First', incoming)
+            # print('First', incoming)
             if not corrupt(incoming):
                 break
         if check_flag_sync(incoming):
-            print(incoming)
+            # print(incoming)
             seq_num = get_seqNum(incoming)
             packet = Segment()
             packet.header['ack_num'] = seq_num + 1
@@ -195,7 +194,7 @@ class TCP:
             incoming, address = self.s.recvfrom(1024)
             if not corrupt(incoming):
                 break
-            print(incoming)
+            # print(incoming)
             if check_flag_ack(incoming) & get_ackNum(incoming) == 11:
                 return True
             else:

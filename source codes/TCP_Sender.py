@@ -7,7 +7,7 @@ from TCP import *
 option3_error = 0.00
 option4_error = 0.00
 timeout = 30 / 1000
-end_buff = 818000
+end_buff = 818058
 
 
 def checksum(data):
@@ -46,6 +46,7 @@ class Packet:
 
 
 def time_out(t):
+    global timeout
     if time.time() - t > timeout:
         # print('\t #######  TIME OUT #######' )
         return True
@@ -79,14 +80,15 @@ class Sender:
         self.sockets.send(data)
 
     def close(self):
+        global timeout
         seg = Segment()
         seg.flags['F'] = 0b1
         self.sockets.send(seg.make_packet(''.encode()))
-        timeout = 0.5
+        timeout = 0.02
         T = time.time()
         while True:
             if time_out(T):
-                break
+                self.sockets.send(seg.make_packet(''.encode()))
             if self.rdt_rcv():
                 if check_flag_f(self.rcvpkt):
                     break
@@ -103,8 +105,10 @@ class Sender:
         print(sdt_pkt)
         self.sockets.sendto(sdt_pkt, (self.destination, self.port))
         incoming = 0
-        while not time_out(T):
+        while True:
             try:
+                if time_out(T):
+                    self.sockets.sendto(sdt_pkt, (self.destination, self.port))
                 incoming, addr = self.sockets.recvfrom(1024)
                 if incoming:
                     break
@@ -132,23 +136,25 @@ if __name__ == '__main__':
     print(f'**** GB{N} ****')
     with socket(AF_INET, SOCK_DGRAM) as client_socket:
         sender = Sender(12000, gethostname(), client_socket)
+        client_socket.setblocking(False)
         sender.handShake()
 
         T = 0
         st_clock = time.time()
 
-        client_socket.setblocking(False)
+
         sender = Sender(12000, gethostname(), client_socket)  # create instance of Sender class
         done = False
         base = 0
         nextseqnum = 0
         rec_window = 4096
-        rtt_time = 0.30
+        rtt_time = 0.05
         dev_rtt = 0
         stamp_time = 0
+        dup_ACKcount = 0
+        cwnd = MSS
         while not done:
-
-            if rtt_time > 0.01:
+            if rtt_time > 0.005:
                 timeout = rtt_time + dev_rtt * 4
 
             if nextseqnum < base + rec_window:
@@ -159,31 +165,39 @@ if __name__ == '__main__':
                 stamp_time = time.time()
                 if base == nextseqnum:
                     T = time.time()  # Start Timer
-                nextseqnum += MSS
-                print(
-                    f'\n\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}\t T: {rtt_time * 1000 // 1}ms, STD: {dev_rtt * 1000 // 1}ms',
-                    end='')
+                nextseqnum += cwnd
+
 
             if time_out(T):
                 T = time.time()  # Reset Timer
-                for i in range(base, min(nextseqnum, end_buff), MSS):
+                for i in range(base, min(nextseqnum, end_buff), cwnd):
                     seg = Segment()
                     seg.set_seqNum(i)
                     seg.set_head_len(15)
                     sender.rdt_send(seg.make_packet(p.packets[i // 1000]))
+                stamp_time = time.time()
+                dup_ACKcount = 0
+                cwnd = MSS
 
             if sender.rdt_rcv():
                 rtt = time.time() - stamp_time
                 rtt_time = rtt_time * 0.875 + rtt * 0.125
                 dev_rtt = dev_rtt * 0.75 + np.abs(rtt - rtt_time) * 0.25
 
-                base = get_ackNum(sender.rcvpkt)
+                ackNum = get_ackNum(sender.rcvpkt)
+                if ackNum == base:
+                    dup_ACKcount += 1
+                else:
+                    dup_ACKcount = 0
+                    cwnd += MSS
+                    base = ackNum
                 rec_window = get_rec_window(sender.rcvpkt)
                 if base != nextseqnum:
                     T = time.time()  # Reset Timer
 
-
-            if nextseqnum // 1000 == 819:
+            print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t T: {rtt_time * 1000 // 1}ms, timeout: {timeout * 1000 // 1}ms',
+                end='')
+            if base == 818058:
                 done = True
         sender.close()
     print(f"\nElapsed time: {time.time() - st_clock}")
