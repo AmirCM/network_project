@@ -128,8 +128,7 @@ if __name__ == '__main__':
                     buffer_pointer = 0
                 elif len(data) <= remaining_buffer_size and (
                         len(data) + seqNum - next_AckNum) < remaining_buffer_size and seqNum > next_AckNum:
-                    print(
-                        f'\n\rOUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {seqNum}, {next_AckNum}, {len(data)}')
+                    #print(f'\n\rOUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {seqNum}, {next_AckNum}, {len(data)}')
                     loc = seqNum - next_AckNum
                     buffer[buffer_pointer + loc:len(data)] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
@@ -141,13 +140,13 @@ if __name__ == '__main__':
                 seg.set_head_len(15)
                 try:
                     r.sockets.send(seg.make_packet(''.encode()))
-                    print(f'\rnextAck:{next_AckNum}, Seq:{seqNum}', end='')
+                    #print(f'\rnextAck:{next_AckNum}, Seq:{seqNum}', end='')
                 except:
                     print(f'\rNA:{seg.header}', end='')
                     input('?')
 
             else:
                 if seg.flags['A'] == 0b1:
-                    print(f'\tDA:{next_AckNum}', end='')
+                    #print(f'\tDA:{next_AckNum}', end='')
                     r.sockets.send(seg.make_packet(''.encode()))
         application.save()

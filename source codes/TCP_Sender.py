@@ -100,7 +100,7 @@ class Sender:
 
         T = time.time()
         sdt_pkt = seg.make_packet(''.encode())
-        print(sdt_pkt)
+        # print(sdt_pkt)
         self.sockets.sendto(sdt_pkt, (self.destination, self.port))
         incoming = 0
         while True:
@@ -114,7 +114,7 @@ class Sender:
                 print('\rWait', end='')
         # print(f'NEW: {get_seqNum(incoming)}, {check_flag_ack(incoming)}, {get_ack_num(incoming)}')
         if not corrupt(incoming):
-            print(incoming)
+            #print(incoming)
             if (x + 1) == get_ackNum(incoming) and check_flag_ack(incoming):  # Incoming AckNum = x + 1, Ack
                 seg.set_ackNum(get_seqNum(incoming) + 1)  # incoming SeqNum + 1
                 seg.flags['A'] = 0b1
@@ -194,4 +194,7 @@ if __name__ == '__main__':
             if base == 818058:
                 done = True
         sender.close()
-    print(f"\nElapsed time: {time.time() - st_clock}")
+    elapsed_t = time.time() - st_clock
+    with open('Data_loss.txt', 'a') as f:
+        f.write(f'p={p}, {elapsed_t}\n')
+    print(f"\nElapsed time: {elapsed_t}")
