@@ -127,3 +127,7 @@ ___
 * TCP performance was not as great as Phase 3 or Phase 5, but better than Phase 4.
 * Based on this graph, Phase 3 and Phase 5 are the best performers, with Phase 3 likely having a slight edge because of its consistency in execution time for both ACK and Data packet loss/errors.
 
+#Plot Comparing TCP Data Loss and ACK Loss
+![Alt text](imgs/Screenshot 2022-12-09 210809.png?raw=true "Optional Title")
+* This gragh compares the TCP data loss trendline with the TCP ACK loss trendline
+* Data loss yeilds a greater loss rate than ack loss
