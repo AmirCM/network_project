@@ -102,6 +102,7 @@ if __name__ == '__main__':
     if r.listen():
         seg = Segment()
         while True:
+
             if r.rdt_rcv():
                 if check_flag_f(r.recv_pkt):
                     seg.reset_flags()
@@ -130,9 +131,10 @@ if __name__ == '__main__':
                         len(data) + seqNum - next_AckNum) < remaining_buffer_size and seqNum > next_AckNum:
                     #print(f'\n\rOUT of ORDER {remaining_buffer_size}, {buffer_pointer}, {seqNum}, {next_AckNum}, {len(data)}')
                     loc = seqNum - next_AckNum
-                    buffer[buffer_pointer + loc:len(data)] = data
+                    buffer[buffer_pointer + loc: buffer_pointer + loc + len(data)] = data
                     out_order_buffer[buffer_pointer + loc] = len(data)
                     remaining_buffer_size = end_pointer - (buffer_pointer + loc + len(data)) + 1
+
                 seg.reset_flags()
                 seg.set_ackNum(next_AckNum)
                 seg.flags['A'] = 0b1
@@ -147,6 +149,5 @@ if __name__ == '__main__':
 
             else:
                 if seg.flags['A'] == 0b1:
-                    #print(f'\tDA:{next_AckNum}', end='')
                     r.sockets.send(seg.make_packet(''.encode()))
         application.save()

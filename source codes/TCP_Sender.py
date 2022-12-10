@@ -145,13 +145,16 @@ if __name__ == '__main__':
         done = False
         base = 0
         nextseqnum = 0
-        rec_window = 4096
+        rec_window = 10000
         rtt_time = 0.05
         dev_rtt = 0
         stamp_time = 0
         dup_ACKcount = 0
         cwnd = MSS
+        avg = 0
+        step = 0
         while not done:
+
             #print(f'\rseq: {nextseqnum}, Base: {base}, RecW: {rec_window}, cwnd: {cwnd}\t, timeout: {timeout * 1000 // 1}ms',
             #    end='')
             if rtt_time > 0.001:
@@ -186,10 +189,13 @@ if __name__ == '__main__':
 
                 ackNum = get_ackNum(sender.rcvpkt)
                 if ackNum != base:
+                    # step += 1
+                    # avg  += ((ackNum - base) - avg)/step
+                    # print(f'\t\r {avg//1},\t {rec_window}\t', end='')
                     cwnd += MSS
                     base = ackNum
                     T = time.time()
-                rec_window = get_rec_window(sender.rcvpkt)
+                    rec_window = get_rec_window(sender.rcvpkt)
 
             if base == 818058:
                 done = True
@@ -197,4 +203,4 @@ if __name__ == '__main__':
     elapsed_t = time.time() - st_clock
     with open('records.txt', 'a') as f:
         f.write(f'p={p*100//1}, {elapsed_t}\n')
-    print(f"\nElapsed time: {elapsed_t}")
+    print(f"Elapsed time: {elapsed_t}")
