@@ -1,8 +1,8 @@
-# Phase 5 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
+# Phase 6 design doc by Amirhossein Behzadfar, Abhi Patel, and Kalvin McCallum
 ___
 # Introduction
 ___
-Phase 5 of the network design project implements Go-Back-N protocol over an unreliable UDP channel with bit-errors and loss. Similar to phase 4, phase 5 implements five data transfer senarios, namely no loss/bit-errors, ack packet bit-errors, data packet bit-error, ack packet loss, and data packet loss. However, data transfer is implemented using a pipelined method. Two primary approaches used to implemented the pipelined protocol include Go-Back-N and selective repeat. In Go-Back-N, the sender transmits multiple packets without waiting for an acknowledgement, but is constrained by a maximum number of unacknowledges packets allowed in the pipeline. The selective repeat protocol ensures that the sender only retransmits the packets that it suspects were received in error by the receiver. Thus, the receiver acknowledges only the individual packets that are received irrespective of the order. 
+Phase 6 of the network design project involves the implementation of TCP. The aspects implemented are RDT, connection setup, connection teardown, dynamic window size, dynamic timeout, checksum, flow control, congestion control (Tahoe).
 
 # Sender Code
 ___
