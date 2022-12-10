@@ -18,7 +18,7 @@ class Receiver:
 
     def rdt_rcv(self) -> bool:
         try:
-            self.recv_pkt = self.sockets.recv(60095)
+            self.recv_pkt = self.sockets.recv(end_pointer)
         except:
             return False
         if np.random.binomial(1, self.loss_probability):
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
                 seqNum = get_seqNum(r.recv_pkt)
                 data = r.extract()
-
+                print(len(data))
                 if seqNum == next_AckNum and (len(data) <= remaining_buffer_size or len(data) <= 1000):
                     buffer[buffer_pointer:buffer_pointer + len(data)] = data
                     buffer_pointer += len(data)
