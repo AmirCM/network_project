@@ -121,7 +121,7 @@ ___
 * The best window size would likely be 5 packets to get the benefit of a quick execution time for ACK-related errors while not having the run time for data packet errors being too long.
 
 # Plot Comparing Execution Time by Project Phase for the Bit-Error Options (20%)
-![Alt text](imgs/Graph4_Phase5.jpg?raw=true "Optional Title")
+![Alt text](imgs/Graph4_Phase5.png?raw=true "Optional Title")
 * This graph compares the execution time of transferring an image file between project phases 3, 4 and 5, at 20% error for both the ACK and data packet options
 * We see that Phase 5 has the fastest execution time in the event of ACK errors, while Phase 3 had the fastest execution time for data packet losses.
 * TCP performance was not as great as Phase 3 or Phase 5, but better than Phase 4.
